@@ -37,6 +37,7 @@ public class PlayerController : MonoBehaviour {
 	bool canMoveRight = true;
 	bool canMoveLeft = true;
 	bool dead = false;
+	bool _didKill = false;
 
 	// component references
 	Rigidbody2D m_rb = null;
@@ -51,6 +52,11 @@ public class PlayerController : MonoBehaviour {
 	public AudioSource highjumpSFX;
 	public AudioSource lowjumpSFX;
 	public AudioSource killSFX;
+
+	// particle effects
+	[Header("Particle Effects")]
+	[SerializeField] ParticleSystem _speedUpParticles;
+	[SerializeField] ParticleSystem _slowDownParticles;
 
 	// Start is called before the first frame update
     void Start() {
@@ -147,12 +153,24 @@ public class PlayerController : MonoBehaviour {
 		}
 		// when pressed, the jump height resets, and speed reduces
 		if (m_attackPressed) {
-			if(attackSFX)
-            {
+			// reset kill check
+			_didKill = false;
+			if (attackSFX) {
 				attackSFX.Play();
             }
+			/*if (_slowDownParticles) {
+				_slowDownParticles.Play();
+			}
+			m_currMoveSpd = Mathf.Clamp(m_currMoveSpd - m_moveChangeRate, m_minMoveSpd, m_maxMoveSpd);*/
 			m_currJumpCharge = m_minJumpForce;
-			m_currMoveSpd = Mathf.Clamp(m_currMoveSpd - m_moveChangeRate, m_minMoveSpd, m_maxMoveSpd);
+		}
+		// when attack released, apply slowdown if no enemies killed
+		if (m_attackReleased && !_didKill) {
+			if (_slowDownParticles) {
+				_slowDownParticles.Play();
+			}
+			m_currMoveSpd = Mathf.Clamp(m_currMoveSpd - m_moveChangeRate, m_minMoveSpd, m_maxMoveSpd); 
+			// TODO: add sound effect
 		}
 	}
 
@@ -238,7 +256,7 @@ public class PlayerController : MonoBehaviour {
 			setNewTerminalVel();
 		}
 
-		// if we are colliding with the ground, no horizontal checks
+		// if we are colliding with the ground, no horrizontal checks
 		if (collision.gameObject.tag == "Ground")
 			return;
 		else if (m_rightHeld && canMoveRight && contact.normal == Vector2.left) {
@@ -262,10 +280,20 @@ public class PlayerController : MonoBehaviour {
 		m_attackRange = m_maxAttackRange;
 		//m_sword.transform.localScale = new Vector3(m_sword.transform.localScale.x, m_attackRange, m_sword.transform.localScale.z);
 		// increase speed
-		m_currMoveSpd = Mathf.Clamp(m_currMoveSpd + (m_moveChangeRate * 2), m_currMoveSpd, m_maxMoveSpd);
+		//m_currMoveSpd = Mathf.Clamp(m_currMoveSpd + (m_moveChangeRate * 2), m_currMoveSpd, m_maxMoveSpd);
+		m_currMoveSpd = Mathf.Clamp(m_currMoveSpd + m_moveChangeRate, m_currMoveSpd, m_maxMoveSpd);
+		// maek that we killed so that we don't slow down
+		_didKill = true;
 		// play sound
 		if (killSFX)
 			killSFX.Play();
+		// show particle effects for speeding up
+		if (_speedUpParticles) {
+			if (_slowDownParticles && _slowDownParticles.isPlaying) {
+				_slowDownParticles.Stop();
+			}
+			_speedUpParticles.Play();
+		}
 	}
 
 	// die
