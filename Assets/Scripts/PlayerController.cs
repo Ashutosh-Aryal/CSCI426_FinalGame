@@ -47,11 +47,13 @@ public class PlayerController : MonoBehaviour {
 
 	//SFX
 	[Header("SFX Values")]
-	public AudioSource attackSFX;
-	public AudioSource deathSFX;
-	public AudioSource highjumpSFX;
-	public AudioSource lowjumpSFX;
-	public AudioSource killSFX;
+	[SerializeField] private AudioSource attackSFX;
+	[SerializeField] private AudioSource deathSFX;
+	[SerializeField] private AudioSource highjumpSFX;
+	[SerializeField] private AudioSource lowjumpSFX;
+	[SerializeField] private AudioSource killSFX;
+	[SerializeField] private AudioSource speedUpSFX;
+	[SerializeField] private AudioSource slowDownSFX;
 
 	// particle effects
 	[Header("Particle Effects")]
@@ -169,8 +171,10 @@ public class PlayerController : MonoBehaviour {
 			if (_slowDownParticles) {
 				_slowDownParticles.Play();
 			}
-			m_currMoveSpd = Mathf.Clamp(m_currMoveSpd - m_moveChangeRate, m_minMoveSpd, m_maxMoveSpd); 
-			// TODO: add sound effect
+			m_currMoveSpd = Mathf.Clamp(m_currMoveSpd - m_moveChangeRate, m_minMoveSpd, m_maxMoveSpd);
+			// TODO: add slow-down sound effect
+			if (slowDownSFX)
+				slowDownSFX.Play();
 		}
 	}
 
@@ -288,11 +292,14 @@ public class PlayerController : MonoBehaviour {
 		if (killSFX)
 			killSFX.Play();
 		// show particle effects for speeding up
-		if (_speedUpParticles) {
+		if (!dead && _speedUpParticles) {
 			if (_slowDownParticles && _slowDownParticles.isPlaying) {
 				_slowDownParticles.Stop();
 			}
 			_speedUpParticles.Play();
+			// play sound effect too
+			if (speedUpSFX)
+				speedUpSFX.Play();
 		}
 	}
 
