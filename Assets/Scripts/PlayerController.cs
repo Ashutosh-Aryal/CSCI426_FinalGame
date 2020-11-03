@@ -59,6 +59,8 @@ public class PlayerController : MonoBehaviour {
 	[Header("Particle Effects")]
 	[SerializeField] ParticleSystem _speedUpParticles;
 	[SerializeField] ParticleSystem _slowDownParticles;
+	[SerializeField] ParticleSystem _rangeUpParticles;
+	[SerializeField] ParticleSystem _rangeDownParticles;
 
 	// Start is called before the first frame update
     void Start() {
@@ -139,6 +141,9 @@ public class PlayerController : MonoBehaviour {
 		// reduce the attack range
 		m_attackRange = Mathf.Clamp(m_attackRange - m_attackRangeRate, m_minAttackRange, m_attackRange);
 		//m_sword.transform.localScale = new Vector3(m_sword.transform.localScale.x, m_attackRange, m_sword.transform.localScale.z);
+		// show sword effect
+		if (_rangeDownParticles)
+			_rangeDownParticles.Play();
 	}
 
 	// make player attack and affect other stats
@@ -282,6 +287,9 @@ public class PlayerController : MonoBehaviour {
 	public void processKill() {
 		// reset attack range
 		m_attackRange = m_maxAttackRange;
+		// show sword effect
+		if (_rangeUpParticles)
+			_rangeUpParticles.Play();
 		//m_sword.transform.localScale = new Vector3(m_sword.transform.localScale.x, m_attackRange, m_sword.transform.localScale.z);
 		// increase speed
 		//m_currMoveSpd = Mathf.Clamp(m_currMoveSpd + (m_moveChangeRate * 2), m_currMoveSpd, m_maxMoveSpd);
@@ -317,6 +325,11 @@ public class PlayerController : MonoBehaviour {
 		m_renderer.enabled = false;
 		m_sword.GetComponent<SpriteRenderer>().enabled = false;
 		dead = true;
+		// turn off particles
+		if (_rangeDownParticles) Destroy(_rangeDownParticles);
+		if (_rangeUpParticles) Destroy(_rangeUpParticles);
+		if (_speedUpParticles) Destroy(_speedUpParticles);
+		if (_slowDownParticles) Destroy(_slowDownParticles);
 	}
 
 	// accessors
