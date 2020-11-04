@@ -138,12 +138,15 @@ public class PlayerController : MonoBehaviour {
 		// reset jump charge
 		m_currJumpCharge = m_minJumpForce;
 
-		// reduce the attack range
-		m_attackRange = Mathf.Clamp(m_attackRange - m_attackRangeRate, m_minAttackRange, m_attackRange);
-		//m_sword.transform.localScale = new Vector3(m_sword.transform.localScale.x, m_attackRange, m_sword.transform.localScale.z);
-		// show sword effect
-		if (_rangeDownParticles)
+		// if we arent at lowest range, decrease range
+		if (m_attackRange > m_minAttackRange) {
+			// show sword decrease range effect
+			if (_rangeDownParticles)
 			_rangeDownParticles.Play();
+			// reduce the attack range
+			m_attackRange = Mathf.Clamp(m_attackRange - m_attackRangeRate, m_minAttackRange, m_attackRange);
+			//m_sword.transform.localScale = new Vector3(m_sword.transform.localScale.x, m_attackRange, m_sword.transform.localScale.z);
+		}
 	}
 
 	// make player attack and affect other stats
@@ -285,11 +288,11 @@ public class PlayerController : MonoBehaviour {
 
 	// changes stats when a kill is done; to be called by the victims
 	public void processKill() {
+		// show sword effect of reseting range if the range is not max yet
+		if (_rangeUpParticles && m_attackRange != m_maxAttackRange)
+			_rangeUpParticles.Play();
 		// reset attack range
 		m_attackRange = m_maxAttackRange;
-		// show sword effect
-		if (_rangeUpParticles)
-			_rangeUpParticles.Play();
 		//m_sword.transform.localScale = new Vector3(m_sword.transform.localScale.x, m_attackRange, m_sword.transform.localScale.z);
 		// increase speed
 		//m_currMoveSpd = Mathf.Clamp(m_currMoveSpd + (m_moveChangeRate * 2), m_currMoveSpd, m_maxMoveSpd);
