@@ -14,11 +14,16 @@ public class CameraController : MonoBehaviour {
     [SerializeField] private float m_HorizontalMovementSpeed = 1f;
     [SerializeField] private float m_HorizontalAcceleration = 0.1f;
 
+	private const float MAX_HORIZONTAL_SPEED = 4.8f;
+
     private bool m_ShowingFinalScore = false;
     private bool m_IsPlayerDead = false;
 
     // Update is called once per frame
     void Update() {
+
+		m_HorizontalMovementSpeed = Mathf.Clamp(m_HorizontalMovementSpeed, 0.0f, MAX_HORIZONTAL_SPEED);
+
 		if (!m_IsPlayerDead) {
 			transform.Translate(m_HorizontalMovementSpeed * Time.deltaTime, 0, 0);
 			m_HorizontalMovementSpeed += m_HorizontalAcceleration * Time.deltaTime;
