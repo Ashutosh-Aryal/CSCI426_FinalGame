@@ -17,7 +17,8 @@ public class PlayerController : MonoBehaviour {
 	
 	[Header("Move")]
 	
-	[SerializeField] private float m_CurrentMovementSpeed = 6f;
+	[SerializeField] private float m_MaxSpeed = 6f;
+	[SerializeField] private float m_TimeToReachMaxSpeed = 0.2f;
 	[SerializeField] private float m_MovementSpeedChangeRate = 5f;
 	[SerializeField] private float m_MaxMovementSpeed = 16f;
 	[SerializeField] private float m_MinMovementSpeed = 2f;
@@ -76,6 +77,7 @@ public class PlayerController : MonoBehaviour {
 
     private float m_CurrentMaxJumpForce;
 	private float m_InitialJumpChargeRate;
+	private float m_AccelerationRate;
 
 	private const float MAX_Y_POSITION = 3.0f;
 	private const float MIN_Y_POSITION = -3.38f;
@@ -89,6 +91,7 @@ public class PlayerController : MonoBehaviour {
 		m_AttackRange = m_MaxAttackRange;
 		m_CurrentMaxJumpForce = m_MaxJumpForce;
 		m_InitialJumpChargeRate = m_JumpChargeRate;
+		m_AccelerationRate = m_MaxSpeed / m_TimeToReachMaxSpeed;
     }
 
     // Update is called once per frame
@@ -195,7 +198,7 @@ public class PlayerController : MonoBehaviour {
 
 			m_JumpChargeRate += 2.0f;
 
-			//m_CurrentMovementSpeed = Mathf.Clamp(m_CurrentMovementSpeed - m_MovementSpeedChangeRate, m_MinMovementSpeed, m_MaxMovementSpeed);
+			//m_MaxSpeed = Mathf.Clamp(m_MaxSpeed - m_MovementSpeedChangeRate, m_MinMovementSpeed, m_MaxMovementSpeed);
 
 			if (m_SlowDownSFX)
 				m_SlowDownSFX.Play();
@@ -210,9 +213,9 @@ public class PlayerController : MonoBehaviour {
 
 		bool shouldFlipXFacingDirection = (m_ShouldMoveRight && isCurrentlyLookingLeft) || (m_ShouldMoveLeft && isCurrentlyLookingRight);
 
-		if (shouldFlipXFacingDirection)
+		if (shouldFlipXFacingDirection) {
 			transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
-		
+		}
 		// the code above simply handles facing in the direction of input
 
 		// can't move if attacking
@@ -222,15 +225,37 @@ public class PlayerController : MonoBehaviour {
 		UpdateAllowedMovementDirection();
 
 		// get input based on if we can move left/right
-		short movementSpeedScalar = 0;
+		short movementDirectionScalar = 0;
 		if (m_ShouldMoveRight && m_CanMoveRight) {
-			movementSpeedScalar = 1; m_CanMoveLeft = true;
+			movementDirectionScalar = 1; m_CanMoveLeft = true;
 		} else if (m_ShouldMoveLeft && m_CanMoveLeft) {
-			movementSpeedScalar = -1; m_CanMoveRight = true;
+			movementDirectionScalar = -1; m_CanMoveRight = true;
 		}
 
+		Vector2 currentVelocity = m_Rigidbody2D.velocity;
+
+		bool isAcceleratingRight = (movementDirectionScalar > 0 && currentVelocity.x < m_MaxSpeed);
+		bool isDeacceleratingLeft = (movementDirectionScalar == 0 && currentVelocity.x < 0);
+
+		bool shouldAccelerateRight = isAcceleratingRight || isDeacceleratingLeft;
+
+		bool isAcceleratingLeft = (movementDirectionScalar < 0 && currentVelocity.x > -m_MaxSpeed);
+		bool isDeacceleratingRight = (movementDirectionScalar == 0 && currentVelocity.x > 0);
+
+		bool shouldAccelerateLeft = isAcceleratingLeft || isDeacceleratingRight;
+
+		float powerVal = (isDeacceleratingRight || isDeacceleratingLeft)? 1.8f: 0.6f;
+
+		if (shouldAccelerateRight) {
+			currentVelocity.x += Mathf.Pow(m_AccelerationRate * Time.deltaTime, powerVal);
+        } else if(shouldAccelerateLeft) {
+			currentVelocity.x -= Mathf.Pow(m_AccelerationRate * Time.deltaTime, powerVal);
+        }
+
+		currentVelocity.x = Mathf.Clamp(currentVelocity.x, -m_MaxSpeed, m_MaxSpeed);
+
 		// move left-right based on move speed and input
-		m_Rigidbody2D.velocity = new Vector2(movementSpeedScalar * m_CurrentMovementSpeed, m_Rigidbody2D.velocity.y);
+		m_Rigidbody2D.velocity = currentVelocity;
 	}
 
 	private void UpdateAllowedMovementDirection() {
@@ -291,6 +316,7 @@ public class PlayerController : MonoBehaviour {
 		ContactPoint2D contact = collision.contacts[0];
 		
 		// check if we land on top of something; if we do, mark on ground and update terminal velocity
+		// check if we land on top of something; if we do, mark on ground and update terminal velocity
 		bool didPlayerLand = m_InAir && contact.normal == Vector2.up;
 
 		if (didPlayerLand) {
@@ -333,7 +359,7 @@ public class PlayerController : MonoBehaviour {
 
 		// reset jump charge rate
 		m_JumpChargeRate = m_InitialJumpChargeRate;
-		//m_CurrentMovementSpeed = Mathf.Clamp(m_CurrentMovementSpeed + m_MovementSpeedChangeRate, m_CurrentMovementSpeed, m_MaxMovementSpeed);
+		//m_MaxSpeed = Mathf.Clamp(m_MaxSpeed + m_MovementSpeedChangeRate, m_MaxSpeed, m_MaxMovementSpeed);
 		
 		// maek that we killed so that we don't slow down
 		m_DidKill = true;
