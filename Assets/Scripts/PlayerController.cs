@@ -19,9 +19,9 @@ public class PlayerController : MonoBehaviour {
 	
 	[SerializeField] private float m_MaxSpeed = 6f;
 	[SerializeField] private float m_TimeToReachMaxSpeed = 0.2f;
-	[SerializeField] private float m_MovementSpeedChangeRate = 5f;
-	[SerializeField] private float m_MaxMovementSpeed = 16f;
-	[SerializeField] private float m_MinMovementSpeed = 2f;
+	//[SerializeField] private float m_MovementSpeedChangeRate = 5f;
+	//[SerializeField] private float m_MaxMovementSpeed = 16f;
+	//[SerializeField] private float m_MinMovementSpeed = 2f;
 	
 	[Header("Attack")]
 	
