@@ -1,10 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TreeEditor;
+using UnityEditor.Build;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
 	[Header("Jump")]
+
+	[SerializeField] private GameObject m_JumpOverlayObject;
 	
 	[SerializeField] private float m_CurrentJumpForce = 4f;
 	[SerializeField] private float m_JumpChargeRate = 5f;
@@ -20,7 +24,7 @@ public class PlayerController : MonoBehaviour {
 	
 	[Header("Attack")]
 	
-	private float m_AttackRange = 1.5f;
+	[SerializeField] private float m_AttackRange = 1.5f;
 	[SerializeField] private float m_MaxAttackRange = 1.5f;
 	[SerializeField] private float m_MinAttackRange = 0.2f;
 	[SerializeField] private float m_AttackRangeRate = .1f;
@@ -71,6 +75,9 @@ public class PlayerController : MonoBehaviour {
 	private bool m_ShouldMoveRight = false;
 
     private float m_CurrentMaxJumpForce;
+
+	private const float MAX_Y_POSITION = 3.0f;
+	private const float MIN_Y_POSITION = -3.38f;
 
     // Start is called before the first frame update
     void Start() {
@@ -235,9 +242,25 @@ public class PlayerController : MonoBehaviour {
 	// draw's indicator of how dangerous jump charge is
 	void DrawJumpIndicator() {
 		float percentage = m_CurrentJumpForce / m_CurrentMaxJumpForce;
-		m_SpriteRenderer.color = new Color((m_SafeColor.r * (1 - percentage)) + (m_DangerColor.r * percentage),
-									(m_SafeColor.g * (1 - percentage)) + (m_DangerColor.g * percentage),
-									(m_SafeColor.b * (1 - percentage)) + (m_DangerColor.b * percentage));
+
+		Color currentCubeColor = new Color((m_SafeColor.r * (1 - percentage)) + (m_DangerColor.r * percentage),
+                                    (m_SafeColor.g * (1 - percentage)) + (m_DangerColor.g * percentage),
+                                    (m_SafeColor.b * (1 - percentage)) + (m_DangerColor.b * percentage));
+
+		m_SpriteRenderer.color = currentCubeColor;
+
+		float timeTillMaxJumpHeight = -m_CurrentJumpForce / (Physics2D.gravity.y * m_Rigidbody2D.gravityScale);
+		float peakJumpYPosition = transform.position.y + m_CurrentJumpForce * timeTillMaxJumpHeight + (0.5f * m_Rigidbody2D.gravityScale) * Physics2D.gravity.y * Mathf.Pow(timeTillMaxJumpHeight, 2.0f);
+
+		peakJumpYPosition = Mathf.Clamp(peakJumpYPosition, MIN_Y_POSITION, MAX_Y_POSITION);
+
+		Vector3 peakJumpPosition = new Vector3(transform.position.x, peakJumpYPosition, transform.position.z);
+
+		m_JumpOverlayObject.transform.position = peakJumpPosition;
+
+		SpriteRenderer jumpOverlaySpriteRenderer = m_JumpOverlayObject.GetComponent<SpriteRenderer>();
+		currentCubeColor.a = jumpOverlaySpriteRenderer.color.a;
+		jumpOverlaySpriteRenderer.color = currentCubeColor;
 	}
 
 	// process special collision events
