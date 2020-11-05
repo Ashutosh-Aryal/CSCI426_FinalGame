@@ -1,65 +1,62 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour {
-	//bool doAccelerate = false;
-	[HideInInspector] public bool playerDead = false;
-	[SerializeField] private float m_velocity = 1f;
-	[SerializeField] private float m_acceleration = 0.2f;
 
-	public GameObject canvas;
-	public GameObject[] buttons;
-	public RectTransform timeTextTrans;
+	[SerializeField] private GameObject[] m_ButtonObjects;
+    [SerializeField] private GameObject m_CanvasObject;
 
-	public Vector2 targetTextPos;
+    [SerializeField] private RectTransform m_TimeTextRectTransform;
 
-	public float textSpeed = .5f;
+	[SerializeField] private Vector2 m_TargetTextPosition;
 
-    // Start is called before the first frame update
-    void Start() {
-        
-    }
+	[SerializeField] private float m_TextSpeed = 4f;
+    [SerializeField] private float m_HorizontalMovementSpeed = 1f;
+    [SerializeField] private float m_HorizontalAcceleration = 0.1f;
+
+    private bool m_ShowingFinalScore = false;
+    private bool m_IsPlayerDead = false;
 
     // Update is called once per frame
     void Update() {
-		if (!playerDead) {
-			transform.Translate(m_velocity * Time.deltaTime, 0, 0);
-			m_velocity += m_acceleration * Time.deltaTime;
+		if (!m_IsPlayerDead) {
+			transform.Translate(m_HorizontalMovementSpeed * Time.deltaTime, 0, 0);
+			m_HorizontalMovementSpeed += m_HorizontalAcceleration * Time.deltaTime;
 		}
 		else {
 			var lava = GetComponentInChildren<Lava>();
 			if (lava == null) return;
 			lava.transform.parent = null;
-			lava.m_velocity = Mathf.Max(m_velocity, 10f);
+			lava.m_HorizontalMovementSpeed = Mathf.Max(m_HorizontalMovementSpeed, 10f);
 		}
 	}
 
 	// shows death screen
-	public void showFinalScore() {
-		// TODO
-		canvas.GetComponent<UI>().StopTimer();
+	public void ShowFinalScore() {
+
+		m_IsPlayerDead = true;
+		m_CanvasObject.GetComponent<UI>().StopTimer();
 		StartCoroutine("CoShowFinalScore");
 		Debug.Log("Final score shown");
 	}
 
-	bool showingFinalScore = false;
 	IEnumerator CoShowFinalScore() {
-		if (showingFinalScore) { yield break; }
-		showingFinalScore = true;
+
+		if (m_ShowingFinalScore) { yield break; }
+		m_ShowingFinalScore = true;
 		
 		while (true) {
-			timeTextTrans.position = new Vector2(Mathf.Lerp(timeTextTrans.position.x, targetTextPos.x, textSpeed * Time.deltaTime),
-												Mathf.Lerp(timeTextTrans.position.y, targetTextPos.y, textSpeed * Time.deltaTime));
+			m_TimeTextRectTransform.position = new Vector2(Mathf.Lerp(m_TimeTextRectTransform.position.x, m_TargetTextPosition.x, m_TextSpeed * Time.deltaTime),
+												Mathf.Lerp(m_TimeTextRectTransform.position.y, m_TargetTextPosition.y, m_TextSpeed * Time.deltaTime));
 
-			if (Vector3.SqrMagnitude(timeTextTrans.position - new Vector3(targetTextPos.x, targetTextPos.y)) < .1){
+			if (Vector3.SqrMagnitude(m_TimeTextRectTransform.position - new Vector3(m_TargetTextPosition.x, m_TargetTextPosition.y)) < .1){
 				break;
 			}
 
 			yield return null;
 		}
 
-		foreach (var butt in buttons)
+		foreach (var butt in m_ButtonObjects)
 			butt.SetActive(true);
 
 		yield break;
