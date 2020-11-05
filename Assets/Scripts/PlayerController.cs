@@ -11,9 +11,9 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] private GameObject m_JumpOverlayObject;
 	
 	[SerializeField] private float m_CurrentJumpForce = 4f;
-	[SerializeField] private float m_JumpChargeRate = 5f;
+	[SerializeField] private float m_JumpChargeRate = 6f;
 	[SerializeField] private float m_MaxJumpForce = 30f;
-	[SerializeField] private float m_MinJumpForce = 4f;
+	[SerializeField] private float m_MinJumpForce = 3f;
 	
 	[Header("Move")]
 	
@@ -75,6 +75,7 @@ public class PlayerController : MonoBehaviour {
 	private bool m_ShouldMoveRight = false;
 
     private float m_CurrentMaxJumpForce;
+	private float m_InitialJumpChargeRate;
 
 	private const float MAX_Y_POSITION = 3.0f;
 	private const float MIN_Y_POSITION = -3.38f;
@@ -87,6 +88,7 @@ public class PlayerController : MonoBehaviour {
 		m_SpriteRenderer = GetComponent<SpriteRenderer>();
 		m_AttackRange = m_MaxAttackRange;
 		m_CurrentMaxJumpForce = m_MaxJumpForce;
+		m_InitialJumpChargeRate = m_JumpChargeRate;
     }
 
     // Update is called once per frame
@@ -186,10 +188,14 @@ public class PlayerController : MonoBehaviour {
 		
 		} else if (m_AttackReleased && !m_DidKill) { // when attack released, apply slowdown if no enemies killed
             
+			// TODO: Probably should replace the sound effects at some point with something that works better for increasing jump charge rate
+
 			if (m_SlowDownParticles)
 				m_SlowDownParticles.Play();
 
-			m_CurrentMovementSpeed = Mathf.Clamp(m_CurrentMovementSpeed - m_MovementSpeedChangeRate, m_MinMovementSpeed, m_MaxMovementSpeed);
+			m_JumpChargeRate += 2.0f;
+
+			//m_CurrentMovementSpeed = Mathf.Clamp(m_CurrentMovementSpeed - m_MovementSpeedChangeRate, m_MinMovementSpeed, m_MaxMovementSpeed);
 
 			if (m_SlowDownSFX)
 				m_SlowDownSFX.Play();
@@ -324,9 +330,10 @@ public class PlayerController : MonoBehaviour {
 		
 		// reset attack range
 		m_AttackRange = m_MaxAttackRange;
-		
-		// increase speed
-		m_CurrentMovementSpeed = Mathf.Clamp(m_CurrentMovementSpeed + m_MovementSpeedChangeRate, m_CurrentMovementSpeed, m_MaxMovementSpeed);
+
+		// reset jump charge rate
+		m_JumpChargeRate = m_InitialJumpChargeRate;
+		//m_CurrentMovementSpeed = Mathf.Clamp(m_CurrentMovementSpeed + m_MovementSpeedChangeRate, m_CurrentMovementSpeed, m_MaxMovementSpeed);
 		
 		// maek that we killed so that we don't slow down
 		m_DidKill = true;
@@ -364,6 +371,8 @@ public class PlayerController : MonoBehaviour {
 		m_SpriteRenderer.enabled = false;
 		m_SwordObject.GetComponent<SpriteRenderer>().enabled = false;
 		m_IsDead = true;
+
+		if (m_JumpOverlayObject) m_JumpOverlayObject.SetActive(false);
 		
 		// turn off particles
 		if (m_RangeDownParticles) Destroy(m_RangeDownParticles);
