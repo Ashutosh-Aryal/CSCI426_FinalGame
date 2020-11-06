@@ -123,9 +123,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae031229ca8761844aacd49a4759aabb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocity: {x: -4, y: 0}
-  health: 1
-  deathSFX: {fileID: -8961622442326358966}
+  m_Velocity: {x: -4, y: 0}
+  m_DeathSFX: {fileID: 0}
 --- !u!50 &402691290684530500
 Rigidbody2D:
   serializedVersion: 4

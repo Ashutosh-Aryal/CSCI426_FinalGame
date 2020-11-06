@@ -3,32 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Lava : MonoBehaviour {
-	[HideInInspector] public float m_velocity = 0f;
 
-	bool stopped = false;
+	[HideInInspector] public float m_HorizontalMovementSpeed = 0f;
 
-    // Start is called before the first frame update
-    void Start() {
-		
-    }
+	private bool m_HasCameraStopped = false;
 
     // Update is called once per frame
     void Update() {
-		if (stopped)
+
+		if (m_HasCameraStopped)
 			return;
-		transform.Translate(m_velocity * Time.deltaTime, 0, 0);
-		if (transform.position.x >= Camera.main.transform.position.x) {
-			stopped = true;
-			//Camera.main.GetComponent<CameraController>().showFinalScore();
-		}
+		
+		transform.Translate(m_HorizontalMovementSpeed * Time.deltaTime, 0, 0);
+
+		bool isLavaHorizontalPositionPastCamera = transform.position.x >= Camera.main.transform.position.x;
+
+		if (isLavaHorizontalPositionPastCamera)
+			m_HasCameraStopped = true;
+		
 	}
 
     private void OnTriggerEnter2D(Collider2D collision) {
-        if (collision.tag == "Enemy") {
+        
+		if (collision.tag == "Enemy") {
             Destroy(collision.gameObject);
-        }
-		if (collision.gameObject.tag == "Player") {
-			collision.gameObject.GetComponent<PlayerController>().die();
+        } else if (collision.gameObject.tag == "Player") {
+			collision.gameObject.GetComponent<PlayerController>().KillPlayer();
 		}
     }
 }

@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class RoomGenerator : MonoBehaviour
 {
-    public List<Room> startingRooms;
-    public List<Room> randomRoomPool;
-    public float roomSize = 20f;
-    Queue<Room> queue;
-    int randomRoomIndex = -1;
-    Vector2 currCoord = Vector2.zero;
+    [SerializeField] private List<Room> m_StartingRooms;
+    [SerializeField] private List<Room> m_RandomRoomPool;
+    [SerializeField] private float m_RoomSize = 20f;
+    
+    private Queue<Room> m_RoomQueue;
+    private Vector2 m_RoomSpawnPosition = Vector2.zero;
 
     //Keep reference to main(?) camera
     Camera mainCam;
@@ -17,35 +17,29 @@ public class RoomGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        queue = new Queue<Room>();
+        m_RoomQueue = new Queue<Room>();
         mainCam = Camera.main;
 
         //Create starting rooms
-        for(int i = 0; i < startingRooms.Count; i++)
+        for(int i = 0; i < m_StartingRooms.Count; i++)
         {
-            Room room = Instantiate(startingRooms[i], currCoord, Quaternion.identity);
-            currCoord += Vector2.right * roomSize;
-            queue.Enqueue(room);
+            Room room = Instantiate(m_StartingRooms[i], m_RoomSpawnPosition, Quaternion.identity);
+            m_RoomSpawnPosition += Vector2.right * m_RoomSize;
+            m_RoomQueue.Enqueue(room);
         }
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
 
     }
 
     private void FixedUpdate()
     {
         //Get top room
-        Room room = queue.Peek();
+        Room room = m_RoomQueue.Peek();
 
         //Calculate top room's position against camera
         Vector2 displacement = room.transform.position - mainCam.transform.position;
-        if (displacement.sqrMagnitude >= 400f) //Good enough to get rid off from queue
+        if (displacement.magnitude >= m_RoomSize) //Good enough to get rid off from m_RoomQueue
         {
-            Room roomToDestroy = queue.Dequeue();
+            Room roomToDestroy = m_RoomQueue.Dequeue();
             Destroy(roomToDestroy.gameObject);
             CreateRoom();
         }
@@ -53,10 +47,9 @@ public class RoomGenerator : MonoBehaviour
 
     void CreateRoom()
     {
-        randomRoomIndex = Random.Range(0, randomRoomPool.Count);
-        Room roomToInstantiate = randomRoomPool[randomRoomIndex];
-        Room room = Instantiate(roomToInstantiate, currCoord, Quaternion.identity);
-        queue.Enqueue(room);
-        currCoord += Vector2.right * roomSize;
+        int randomIndex = Random.Range(0, m_RandomRoomPool.Count);
+        Room room = Instantiate(m_RandomRoomPool[randomIndex], m_RoomSpawnPosition, Quaternion.identity);
+        m_RoomQueue.Enqueue(room);
+        m_RoomSpawnPosition += Vector2.right * m_RoomSize;
     }
 }
