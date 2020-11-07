@@ -19278,7 +19278,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.64, y: 0.64}
+  m_Size: {x: 0.5, y: 0.64}
   m_EdgeRadius: 0
 --- !u!50 &1500400061
 Rigidbody2D:
@@ -19300,7 +19300,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!331 &112884407567178174
 SpriteMask:
   m_ObjectHideFlags: 0
@@ -19368,7 +19368,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2125172362733510633
 Transform:
   m_ObjectHideFlags: 0
@@ -24145,7 +24145,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &684049494333200050
 Transform:
   m_ObjectHideFlags: 0
@@ -33727,7 +33727,8 @@ GameObject:
   - component: {fileID: 7530423934171474239}
   - component: {fileID: 7530423934171474232}
   - component: {fileID: 7530423934171474233}
-  - component: {fileID: 7530423934171474234}
+  - component: {fileID: 2650293316728056294}
+  - component: {fileID: 6228643397971913557}
   - component: {fileID: 7530423934171474237}
   - component: {fileID: 714948381331053628}
   - component: {fileID: 590524128952520734}
@@ -33832,14 +33833,30 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &7530423934171474234
-BoxCollider2D:
+--- !u!58 &2650293316728056294
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7530423934171474235}
   m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.32
+--- !u!61 &6228643397971913557
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7530423934171474235}
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
@@ -33875,11 +33892,10 @@ MonoBehaviour:
   m_JumpChargeRate: 9
   m_MaxJumpForce: 30
   m_MinJumpForce: 3
+  m_JumpRateIncrease: 5
+  m_JumpRateMaxIncrease: 30
   m_MaxSpeed: 7
   m_TimeToReachMaxSpeed: 0.2
-  m_MovementSpeedChangeRate: 2
-  m_MaxMovementSpeed: 16
-  m_MinMovementSpeed: 2
   m_AttackRange: 1.5
   m_MaxAttackRange: 1.3
   m_MinAttackRange: 0.4
@@ -33897,8 +33913,8 @@ MonoBehaviour:
   m_SlowDownSFX: {fileID: 1648191154524626130}
   m_SpeedUpParticles: {fileID: 1376560771}
   m_SlowDownParticles: {fileID: 651307329}
-  m_RangeUpParticles: {fileID: 3847312372254881472}
-  m_RangeDownParticles: {fileID: 7079356681413139067}
+  m_RangeUpParticles: {fileID: 1157598382422361314}
+  m_RangeDownParticles: {fileID: 8010664924711607746}
 --- !u!82 &714948381331053628
 AudioSource:
   m_ObjectHideFlags: 0
@@ -34589,7 +34605,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2555281672116016034
 Transform:
   m_ObjectHideFlags: 0

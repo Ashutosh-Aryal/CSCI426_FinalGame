@@ -14,7 +14,11 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] private float m_JumpChargeRate = 6f;
 	[SerializeField] private float m_MaxJumpForce = 30f;
 	[SerializeField] private float m_MinJumpForce = 3f;
-	
+	[SerializeField] private float m_JumpRateIncrease = 5f;
+	[SerializeField] private float m_JumpRateMaxIncrease = 30f;
+	private float m_CurrentMaxJumpForce;
+	private float m_InitialJumpChargeRate;
+
 	[Header("Move")]
 	
 	[SerializeField] private float m_MaxSpeed = 6f;
@@ -58,7 +62,8 @@ public class PlayerController : MonoBehaviour {
 
     // component references
     Rigidbody2D m_Rigidbody2D = null;
-    BoxCollider2D m_BoxCollider2D = null;
+    //BoxCollider2D m_BoxCollider2D = null;
+	CircleCollider2D m_CircleCollider2D = null;
     GameObject m_SwordObject = null;
     SpriteRenderer m_SpriteRenderer = null;
 
@@ -75,8 +80,8 @@ public class PlayerController : MonoBehaviour {
 	private bool m_ShouldMoveLeft = false;
 	private bool m_ShouldMoveRight = false;
 
-    private float m_CurrentMaxJumpForce;
-	private float m_InitialJumpChargeRate;
+    //private float m_CurrentMaxJumpForce;
+	//private float m_InitialJumpChargeRate;
 	private float m_AccelerationRate;
 
 	private const float MAX_Y_POSITION = 3.0f;
@@ -85,7 +90,8 @@ public class PlayerController : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
 		m_Rigidbody2D = GetComponent<Rigidbody2D>();
-		m_BoxCollider2D = GetComponent<BoxCollider2D>();
+		//m_BoxCollider2D = GetComponent<BoxCollider2D>();
+		m_CircleCollider2D = GetComponent<CircleCollider2D>();
 		m_SwordObject = GameObject.FindGameObjectWithTag("Sword");
 		m_SpriteRenderer = GetComponent<SpriteRenderer>();
 		m_AttackRange = m_MaxAttackRange;
@@ -94,8 +100,17 @@ public class PlayerController : MonoBehaviour {
 		m_AccelerationRate = m_MaxSpeed / m_TimeToReachMaxSpeed;
     }
 
-    // Update is called once per frame
-    void Update() {
+	private void FixedUpdate() {
+		if (m_IsDead)
+			return;
+		
+		// check if walking off platform (no jumping in air)
+		if (!m_InAir && m_Rigidbody2D.velocity.y < 0)
+			m_InAir = true;
+	}
+
+	// Update is called once per frame
+	void Update() {
 
 		if (m_IsDead)
 			return;
@@ -107,9 +122,9 @@ public class PlayerController : MonoBehaviour {
 		// draw charge indicator
 		DrawJumpIndicator();
 
-		// check if walking off platform (no jumping in air)
+		/*// check if walking off platform (no jumping in air)
 		if (!m_InAir && m_Rigidbody2D.velocity.y < 0)
-			m_InAir = true;
+			m_InAir = true;*/
 
 		CheckInput();
         ProcessJump();
@@ -175,8 +190,9 @@ public class PlayerController : MonoBehaviour {
 
 		Quaternion swordRotation = (!m_AttackHeld)? Quaternion.identity: Quaternion.AngleAxis(-90f * Mathf.Sign(transform.localScale.x), Vector3.forward);
 		m_SwordObject.transform.rotation = swordRotation;
-			
-		Vector3 swordPositionOffset = (!m_AttackHeld)? new Vector3(0, m_BoxCollider2D.bounds.extents.y, 0): new Vector3(m_BoxCollider2D.bounds.extents.x * Mathf.Sign(transform.localScale.x), 0, 0);
+
+		//Vector3 swordPositionOffset = (!m_AttackHeld)? new Vector3(0, m_BoxCollider2D.bounds.extents.y, 0): new Vector3(m_BoxCollider2D.bounds.extents.x * Mathf.Sign(transform.localScale.x), 0, 0);
+		Vector3 swordPositionOffset = (!m_AttackHeld) ? new Vector3(0, m_CircleCollider2D.bounds.extents.y, 0) : new Vector3(m_CircleCollider2D.bounds.extents.x * Mathf.Sign(transform.localScale.x), 0, 0);
 		m_SwordObject.transform.position = transform.position + swordPositionOffset;
 
 		if (m_AttackPressed) { // when pressed, the jump height resets, and speed reduces
@@ -189,19 +205,22 @@ public class PlayerController : MonoBehaviour {
 			
 			m_CurrentJumpForce = m_MinJumpForce;
 		
-		} else if (m_AttackReleased && !m_DidKill) { // when attack released, apply slowdown if no enemies killed
-            
+		} else if (m_AttackReleased && !m_DidKill && m_JumpChargeRate != m_JumpRateMaxIncrease) { // when attack released, apply increase charge rate if no kill
+			m_JumpChargeRate = Mathf.Clamp(m_JumpChargeRate + m_JumpRateIncrease, m_JumpChargeRate, m_JumpRateMaxIncrease);
+
+			// NOTE: test using speed-up sound to test increase jump effect
+			if (m_SpeedUpSFX)
+				m_SpeedUpSFX.Play();
+
 			// TODO: Probably should replace the sound effects at some point with something that works better for increasing jump charge rate
 
-			if (m_SlowDownParticles)
+			/*if (m_SlowDownParticles)
 				m_SlowDownParticles.Play();
-
-			m_JumpChargeRate += 2.0f;
 
 			//m_MaxSpeed = Mathf.Clamp(m_MaxSpeed - m_MovementSpeedChangeRate, m_MinMovementSpeed, m_MaxMovementSpeed);
 
 			if (m_SlowDownSFX)
-				m_SlowDownSFX.Play();
+				m_SlowDownSFX.Play();*/
 		}
 	}
 
@@ -262,13 +281,41 @@ public class PlayerController : MonoBehaviour {
 
         // if moving left but were blocked, check if we are free now
         RaycastHit2D[] hits = new RaycastHit2D[1];
-        
-		if (m_ShouldMoveLeft && !m_CanMoveLeft && m_BoxCollider2D.Cast(Vector2.left, hits, .1f) < 1)
-            m_CanMoveLeft = true;
-        
-		if (m_ShouldMoveRight && !m_CanMoveRight && m_BoxCollider2D.Cast(Vector2.right, hits, .1f) < 1)
-            m_CanMoveRight = true;
-    }
+
+		//if (m_ShouldMoveLeft && !m_CanMoveLeft && m_BoxCollider2D.Cast(Vector2.left, hits, .1f) < 1)
+		if (m_ShouldMoveLeft && !m_CanMoveLeft && m_CircleCollider2D.Cast(Vector2.left, hits, .1f) < 1)
+			m_CanMoveLeft = true;
+		else if (m_ShouldMoveLeft && !m_CanMoveLeft) { 
+			foreach (var hit in hits) { 
+				if (hit.transform.tag == "Hazard") {
+					m_CanMoveLeft = true;
+					break;
+				}
+			}
+		}
+
+		//if (m_ShouldMoveRight && !m_CanMoveRight && m_BoxCollider2D.Cast(Vector2.right, hits, .1f) < 1)
+		if (m_ShouldMoveRight && !m_CanMoveRight && m_CircleCollider2D.Cast(Vector2.right, hits, .1f) < 1)
+			m_CanMoveRight = true;
+		else if (m_ShouldMoveRight && !m_CanMoveRight) {
+			foreach (var hit in hits) {
+				if (hit.transform.tag == "Hazard") {
+					m_CanMoveRight = true;
+					break;
+				}
+			}
+		}
+
+		// if considered in air and falling, check if we are actually landing on ground
+		if (m_InAir && m_Rigidbody2D.velocity.y <= 0 && m_CircleCollider2D.Cast(Vector2.down, hits, .1f) >= 1) {
+			foreach (var hit in hits) { 
+				if (hit.transform.tag == "Ground") {
+					m_InAir = false;
+					break;
+				}
+			}
+		}
+	}
 
 	// draw's indicator of how dangerous jump charge is
 	void DrawJumpIndicator() {
@@ -313,33 +360,39 @@ public class PlayerController : MonoBehaviour {
 		}
 
 
-		ContactPoint2D contact = collision.contacts[0];
-		
 		// check if we land on top of something; if we do, mark on ground and update terminal velocity
-		// check if we land on top of something; if we do, mark on ground and update terminal velocity
-		bool didPlayerLand = m_InAir && contact.normal == Vector2.up;
+		foreach (var contact in collision.contacts) {
+				bool didPlayerLand = m_InAir && Vector2.Angle(contact.normal, Vector2.up) <= 60f;
+				//bool didPlayerLand = m_InAir && contact.normal == Vector2.up;
 
-		if (didPlayerLand) {
-			SetCurrentMaxJumpForce(); m_InAir = false;
-		}
+				if (didPlayerLand) {
+					SetCurrentMaxJumpForce(); m_InAir = false;
+				}
 
-		// if we are colliding with the ground, no horrizontal checks
-		if (collision.gameObject.tag == "Ground")
-			return;
+			// if we are colliding with the ground, no horrizontal checks
+			if (collision.gameObject.tag == "Ground")
+				return;
 
-		bool isCollidingWithRightWall = m_ShouldMoveRight && m_CanMoveRight && contact.normal == Vector2.left;
-		bool isCollidingWithLeftWall = m_ShouldMoveLeft && m_CanMoveLeft && contact.normal == Vector2.right;
+			//bool isCollidingWithRightWall = m_ShouldMoveRight && m_CanMoveRight && contact.normal == Vector2.left;
+			bool isCollidingWithRightWall = m_ShouldMoveRight && m_CanMoveRight && Vector2.Angle(contact.normal, Vector2.left) <= 60f;
+			//bool isCollidingWithLeftWall = m_ShouldMoveLeft && m_CanMoveLeft && contact.normal == Vector2.right;
+			bool isCollidingWithLeftWall = m_ShouldMoveLeft && m_CanMoveLeft && Vector2.Angle(contact.normal, Vector2.right) <= 60f;
 
-		if(isCollidingWithLeftWall || isCollidingWithRightWall) {
+			if (isCollidingWithLeftWall || isCollidingWithRightWall) {
             
-			m_Rigidbody2D.velocity = new Vector2(0, m_Rigidbody2D.velocity.y);
+				m_Rigidbody2D.velocity = new Vector2(0, m_Rigidbody2D.velocity.y);
 
-			if(isCollidingWithLeftWall) {
-				m_CanMoveLeft = false; 
-            } else {
-				m_CanMoveRight = false;
-            }
-        }
+				if (isCollidingWithLeftWall) {
+					m_CanMoveLeft = false; 
+				} else {
+					m_CanMoveRight = false;
+				}
+			}
+
+			// break out early if we got all we need
+			if (!m_InAir && (isCollidingWithLeftWall || isCollidingWithRightWall))
+				break;
+		}
 	}
 
 	// sets new terminal velocity based on where player is standing
@@ -356,9 +409,6 @@ public class PlayerController : MonoBehaviour {
 		
 		// reset attack range
 		m_AttackRange = m_MaxAttackRange;
-
-		// reset jump charge rate
-		m_JumpChargeRate = m_InitialJumpChargeRate;
 		//m_MaxSpeed = Mathf.Clamp(m_MaxSpeed + m_MovementSpeedChangeRate, m_MaxSpeed, m_MaxMovementSpeed);
 		
 		// maek that we killed so that we don't slow down
@@ -367,8 +417,14 @@ public class PlayerController : MonoBehaviour {
 		// play sound
 		if (m_KillSFX)
 			m_KillSFX.Play();
-		
-		// show particle effects for speeding up
+
+		// NOTE: testing the speed down sound for reducing jump-charge speed
+		if (m_SlowDownSFX && m_JumpChargeRate != m_InitialJumpChargeRate)
+			m_SlowDownSFX.Play();
+		// reset jump charge rate
+		m_JumpChargeRate = m_InitialJumpChargeRate;
+
+		/*// show particle effects for speeding up
 		if (!m_IsDead && m_SpeedUpParticles) {
 
 			if (m_SlowDownParticles && m_SlowDownParticles.isPlaying)
@@ -379,7 +435,7 @@ public class PlayerController : MonoBehaviour {
 			
 			if (m_SpeedUpSFX)
 				m_SpeedUpSFX.Play();
-		}
+		}*/
 	}
 
 	// called upon player death
@@ -392,7 +448,8 @@ public class PlayerController : MonoBehaviour {
 
         Camera.main.GetComponent<CameraController>().ShowFinalScore();
 		
-		m_BoxCollider2D.enabled = false;
+		//m_BoxCollider2D.enabled = false;
+		m_CircleCollider2D.enabled = false;
 		m_Rigidbody2D.simulated = false;
 		m_SpriteRenderer.enabled = false;
 		m_SwordObject.GetComponent<SpriteRenderer>().enabled = false;
