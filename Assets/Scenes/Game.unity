@@ -828,6 +828,21 @@ PrefabInstance:
       propertyPath: m_screenAnchor
       value: 
       objectReference: {fileID: 1965430248}
+    - target: {fileID: 1124876484456355783, guid: 25079e3fae2924644bc0dc0991ff19d0,
+        type: 3}
+      propertyPath: OscillationAmplitude
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 1124876484456355783, guid: 25079e3fae2924644bc0dc0991ff19d0,
+        type: 3}
+      propertyPath: MinOscillationSpeed
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 1124876484456355783, guid: 25079e3fae2924644bc0dc0991ff19d0,
+        type: 3}
+      propertyPath: MaxOscillationSpeed
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 25079e3fae2924644bc0dc0991ff19d0, type: 3}
 --- !u!1 &1110225726
@@ -1268,16 +1283,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 7530423934171474237, guid: 1f34f1c24d1805b4494265d4f98b0e4f,
-        type: 3}
-      propertyPath: m_JumpChargeIncrease
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7530423934171474237, guid: 1f34f1c24d1805b4494265d4f98b0e4f,
-        type: 3}
-      propertyPath: m_JumpRateIncrease
-      value: 5
-      objectReference: {fileID: 0}
     - target: {fileID: 7530423934171474239, guid: 1f34f1c24d1805b4494265d4f98b0e4f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1717,7 +1722,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1965430247}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -19.46, y: 0, z: 0}
+  m_LocalPosition: {x: -19.46, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1177727665}
