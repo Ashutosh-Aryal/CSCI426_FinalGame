@@ -14,7 +14,11 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] private float m_JumpChargeRate = 6f;
 	[SerializeField] private float m_MaxJumpForce = 30f;
 	[SerializeField] private float m_MinJumpForce = 3f;
-	
+	[SerializeField] private float m_JumpRateIncrease = 5f;
+	[SerializeField] private float m_JumpRateMaxIncrease = 30f;
+	private float m_CurrentMaxJumpForce;
+	private float m_InitialJumpChargeRate;
+
 	[Header("Move")]
 	
 	[SerializeField] private float m_MaxSpeed = 6f;
@@ -75,8 +79,8 @@ public class PlayerController : MonoBehaviour {
 	private bool m_ShouldMoveLeft = false;
 	private bool m_ShouldMoveRight = false;
 
-    private float m_CurrentMaxJumpForce;
-	private float m_InitialJumpChargeRate;
+    //private float m_CurrentMaxJumpForce;
+	//private float m_InitialJumpChargeRate;
 	private float m_AccelerationRate;
 
 	private const float MAX_Y_POSITION = 3.0f;
@@ -189,19 +193,22 @@ public class PlayerController : MonoBehaviour {
 			
 			m_CurrentJumpForce = m_MinJumpForce;
 		
-		} else if (m_AttackReleased && !m_DidKill) { // when attack released, apply slowdown if no enemies killed
-            
+		} else if (m_AttackReleased && !m_DidKill && m_JumpChargeRate != m_JumpRateMaxIncrease) { // when attack released, apply increase charge rate if no kill
+			m_JumpChargeRate = Mathf.Clamp(m_JumpChargeRate + m_JumpRateIncrease, m_JumpChargeRate, m_JumpRateMaxIncrease);
+
+			// NOTE: test using speed-up sound to test increase jump effect
+			if (m_SpeedUpSFX)
+				m_SpeedUpSFX.Play();
+
 			// TODO: Probably should replace the sound effects at some point with something that works better for increasing jump charge rate
 
-			if (m_SlowDownParticles)
+			/*if (m_SlowDownParticles)
 				m_SlowDownParticles.Play();
-
-			m_JumpChargeRate += 2.0f;
 
 			//m_MaxSpeed = Mathf.Clamp(m_MaxSpeed - m_MovementSpeedChangeRate, m_MinMovementSpeed, m_MaxMovementSpeed);
 
 			if (m_SlowDownSFX)
-				m_SlowDownSFX.Play();
+				m_SlowDownSFX.Play();*/
 		}
 	}
 
@@ -356,9 +363,6 @@ public class PlayerController : MonoBehaviour {
 		
 		// reset attack range
 		m_AttackRange = m_MaxAttackRange;
-
-		// reset jump charge rate
-		m_JumpChargeRate = m_InitialJumpChargeRate;
 		//m_MaxSpeed = Mathf.Clamp(m_MaxSpeed + m_MovementSpeedChangeRate, m_MaxSpeed, m_MaxMovementSpeed);
 		
 		// maek that we killed so that we don't slow down
@@ -367,8 +371,14 @@ public class PlayerController : MonoBehaviour {
 		// play sound
 		if (m_KillSFX)
 			m_KillSFX.Play();
-		
-		// show particle effects for speeding up
+
+		// NOTE: testing the speed down sound for reducing jump-charge speed
+		if (m_SlowDownSFX && m_JumpChargeRate != m_InitialJumpChargeRate)
+			m_SlowDownSFX.Play();
+		// reset jump charge rate
+		m_JumpChargeRate = m_InitialJumpChargeRate;
+
+		/*// show particle effects for speeding up
 		if (!m_IsDead && m_SpeedUpParticles) {
 
 			if (m_SlowDownParticles && m_SlowDownParticles.isPlaying)
@@ -379,7 +389,7 @@ public class PlayerController : MonoBehaviour {
 			
 			if (m_SpeedUpSFX)
 				m_SpeedUpSFX.Play();
-		}
+		}*/
 	}
 
 	// called upon player death
