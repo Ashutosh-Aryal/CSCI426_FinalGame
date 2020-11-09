@@ -758,30 +758,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lava
       objectReference: {fileID: 0}
-    - target: {fileID: 1124876484456355779, guid: 25079e3fae2924644bc0dc0991ff19d0,
-        type: 3}
-      propertyPath: m_SortingOrder
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 1124876484456355779, guid: 25079e3fae2924644bc0dc0991ff19d0,
-        type: 3}
-      propertyPath: m_Color.r
-      value: 0.4245283
-      objectReference: {fileID: 0}
-    - target: {fileID: 1124876484456355779, guid: 25079e3fae2924644bc0dc0991ff19d0,
-        type: 3}
-      propertyPath: m_Color.g
-      value: 0.22506943
-      objectReference: {fileID: 0}
-    - target: {fileID: 1124876484456355779, guid: 25079e3fae2924644bc0dc0991ff19d0,
-        type: 3}
-      propertyPath: m_Color.b
-      value: 0.09011215
-      objectReference: {fileID: 0}
     - target: {fileID: 1124876484456355780, guid: 25079e3fae2924644bc0dc0991ff19d0,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -26.9
+      value: -40.3
       objectReference: {fileID: 0}
     - target: {fileID: 1124876484456355780, guid: 25079e3fae2924644bc0dc0991ff19d0,
         type: 3}
@@ -832,11 +812,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1124876484456355782, guid: 25079e3fae2924644bc0dc0991ff19d0,
-        type: 3}
-      propertyPath: m_IsTrigger
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1124876484456355783, guid: 25079e3fae2924644bc0dc0991ff19d0,
         type: 3}
