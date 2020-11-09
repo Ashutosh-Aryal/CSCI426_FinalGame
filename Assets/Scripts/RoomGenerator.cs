@@ -6,7 +6,7 @@ public class RoomGenerator : MonoBehaviour {
     [SerializeField] private List<Room> m_StartingRooms;
     [SerializeField] private List<Room> m_RandomRoomPool;
     
-	private const float ROOM_CELL_WIDTH = 20f;
+	public const float ROOM_CELL_WIDTH = 20f;
     
     private Queue<Room> m_RoomQueue;
     private Vector2 m_RoomSpawnPosition = Vector2.zero;
