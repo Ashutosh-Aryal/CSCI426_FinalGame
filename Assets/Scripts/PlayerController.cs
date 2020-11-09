@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using TreeEditor;
-using UnityEditor.Build;
+//using TreeEditor;
+//using UnityEditor.Build;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
@@ -309,7 +309,7 @@ public class PlayerController : MonoBehaviour {
 		// if considered in air and falling, check if we are actually landing on ground
 		if (m_InAir && m_Rigidbody2D.velocity.y <= 0 && m_CircleCollider2D.Cast(Vector2.down, hits, .1f) >= 1) {
 			foreach (var hit in hits) { 
-				if (hit.transform.tag == "Ground") {
+				if (hit.transform.tag == "Ground" || hit.transform.tag == "Obstacle") {
 					m_InAir = false;
 					break;
 				}
@@ -327,7 +327,8 @@ public class PlayerController : MonoBehaviour {
 
 		m_SpriteRenderer.color = currentCubeColor;
 
-		float timeTillMaxJumpHeight = -m_CurrentJumpForce / (Physics2D.gravity.y * m_Rigidbody2D.gravityScale);
+		// NOTE: reducing the value because I realize that the predictive value over-estimates a little bit, leaving players feeling tricked
+		float timeTillMaxJumpHeight = (-m_CurrentJumpForce / (Physics2D.gravity.y * m_Rigidbody2D.gravityScale)) * .75f;
 		float peakJumpYPosition = transform.position.y + m_CurrentJumpForce * timeTillMaxJumpHeight + (0.5f * m_Rigidbody2D.gravityScale) * Physics2D.gravity.y * Mathf.Pow(timeTillMaxJumpHeight, 2.0f);
 
 		peakJumpYPosition = Mathf.Clamp(peakJumpYPosition, MIN_Y_POSITION, MAX_Y_POSITION);

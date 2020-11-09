@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CameraController : MonoBehaviour {
 
@@ -21,6 +22,8 @@ public class CameraController : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+		if (m_IsPlayerDead && Input.GetKeyDown(KeyCode.R))
+			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
 		m_HorizontalMovementSpeed = Mathf.Clamp(m_HorizontalMovementSpeed, 0.0f, MAX_HORIZONTAL_SPEED);
 

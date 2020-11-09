@@ -1,10 +1,18 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class RoomGenerator : MonoBehaviour {
+	[Range(0f, 1f)]
+	public float DefaultEasyProbability = 0.3f;
+	public float SecsToMaxDifficulty = 20f;
+	private float m_difficultyTimer = 0f;
+	private int m_introCounter = 0;
+
     [SerializeField] private List<Room> m_StartingRooms;
-    [SerializeField] private List<Room> m_RandomRoomPool;
+    [SerializeField] private List<Room> m_EasyRoomPool;
+    [SerializeField] private List<Room> m_HardRoomPool;
     
 	public const float ROOM_CELL_WIDTH = 20f;
     
@@ -14,24 +22,32 @@ public class RoomGenerator : MonoBehaviour {
     // Keep reference to main(?) camera
     Camera mainCam;
 
+	// variables to keep rooms from repeating consecutiveley
+	private int m_lastEasyIndex = -1;
+	private int m_lastHardIndex = -1;
+
     // Start is called before the first frame update
     void Start() {
         m_RoomQueue = new Queue<Room>();
         mainCam = Camera.main;
 
         // Create starting rooms
-        for(int i = 0; i < m_StartingRooms.Count; i++) {
-            Room room = Instantiate(m_StartingRooms[i], m_RoomSpawnPosition, Quaternion.identity);
-            m_RoomSpawnPosition += Vector2.right * ROOM_CELL_WIDTH;
+        for (int i = 0; i < m_StartingRooms.Count; i++) {
+			Vector2 tempSpawnPosition = m_RoomSpawnPosition + (Vector2.right * (ROOM_CELL_WIDTH * ((m_StartingRooms[i].NumUnits / 2f) - 0.5f)));
+			Room room = Instantiate(m_StartingRooms[i], tempSpawnPosition, Quaternion.identity);
             m_RoomQueue.Enqueue(room);
-        }
+			m_RoomSpawnPosition += Vector2.right * ROOM_CELL_WIDTH * room.NumUnits;
+		}
     }
 
     private void FixedUpdate() {
+		// increase difficulty timer if we passed all intro rooms
+		if (m_introCounter >= m_StartingRooms.Count && m_difficultyTimer < SecsToMaxDifficulty)
+			m_difficultyTimer += Time.deltaTime;
+
 		// if there are less than 3 rooms then make sure that we spawn more
-		while (m_RoomQueue.Count < 3) {
+		while (m_RoomQueue.Count < 3)
 			CreateRoom();
-		}
 
         // Get room closest to being destroyed
         Room room = m_RoomQueue.Peek();
@@ -46,15 +62,49 @@ public class RoomGenerator : MonoBehaviour {
 				Room roomToDestroy = m_RoomQueue.Dequeue();
 				Destroy(roomToDestroy.gameObject);
 				CreateRoom();
+				// increase the intro counter to count how many intro rooms we passed
+				if (m_introCounter < m_StartingRooms.Count)
+					m_introCounter++;
 			}
 		}
     }
 
     void CreateRoom() {
-        int randomIndex = Random.Range(0, m_RandomRoomPool.Count);
-		Vector2 tempSpawnPosition = m_RoomSpawnPosition + (Vector2.right * (ROOM_CELL_WIDTH * ((m_RandomRoomPool[randomIndex].NumUnits / 2f) - 0.5f)));
-		Room room = Instantiate(m_RandomRoomPool[randomIndex], tempSpawnPosition, Quaternion.identity);
-		//Room room = Instantiate(m_RandomRoomPool[randomIndex], m_RoomSpawnPosition, Quaternion.identity);
+		// see what room pool we are choosing from
+		bool isDifficult = false;
+		float difficultProb = Mathf.Min(m_difficultyTimer / SecsToMaxDifficulty, 1f - DefaultEasyProbability);
+		if (difficultProb > 0f && UnityEngine.Random.Range(0f, 1f) < difficultProb) {
+			isDifficult = true;
+		}
+		Room room;
+		if (isDifficult) {
+			int randomIndex = UnityEngine.Random.Range(0, m_HardRoomPool.Count);
+			// wrap around if the value is room is the same as before
+			if (randomIndex == m_lastHardIndex) {
+				randomIndex++;
+				if (randomIndex == m_HardRoomPool.Count)
+					randomIndex = 0;
+			}
+			m_lastHardIndex = randomIndex;
+			Vector2 tempSpawnPosition = m_RoomSpawnPosition + (Vector2.right * (ROOM_CELL_WIDTH * ((m_HardRoomPool[randomIndex].NumUnits / 2f) - 0.5f)));
+			room = Instantiate(m_HardRoomPool[randomIndex], tempSpawnPosition, Quaternion.identity);
+		}
+		else {
+			int randomIndex = UnityEngine.Random.Range(0, m_EasyRoomPool.Count);
+			if (randomIndex == m_lastEasyIndex) {
+				randomIndex++;
+				if (randomIndex == m_EasyRoomPool.Count)
+					randomIndex = 0;
+			}
+			m_lastEasyIndex = randomIndex;
+			Vector2 tempSpawnPosition = m_RoomSpawnPosition + (Vector2.right * (ROOM_CELL_WIDTH * ((m_EasyRoomPool[randomIndex].NumUnits / 2f) - 0.5f)));
+			room = Instantiate(m_EasyRoomPool[randomIndex], tempSpawnPosition, Quaternion.identity);
+		}
+
+		//int randomIndex = Random.Range(0, m_EasyRoomPool.Count);
+		//Vector2 tempSpawnPosition = m_RoomSpawnPosition + (Vector2.right * (ROOM_CELL_WIDTH * ((m_EasyRoomPool[randomIndex].NumUnits / 2f) - 0.5f)));
+		//Room room = Instantiate(m_EasyRoomPool[randomIndex], tempSpawnPosition, Quaternion.identity);
+		//Room room = Instantiate(m_EasyRoomPool[randomIndex], m_RoomSpawnPosition, Quaternion.identity);
 		m_RoomQueue.Enqueue(room);
 		m_RoomSpawnPosition += Vector2.right * ROOM_CELL_WIDTH * room.NumUnits;
 		//m_RoomSpawnPosition += Vector2.right * ROOM_CELL_WIDTH;
