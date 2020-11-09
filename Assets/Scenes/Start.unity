@@ -856,7 +856,7 @@ GameObject:
   - component: {fileID: 737635773}
   - component: {fileID: 737635772}
   m_Layer: 5
-  m_Name: Credits Button
+  m_Name: About Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1870,7 +1870,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Credits
+  m_text: About
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7083688249a86cc4d86b1c8d3aba882e, type: 2}
   m_sharedMaterial: {fileID: -4559885884773094010, guid: 7083688249a86cc4d86b1c8d3aba882e,
@@ -1940,7 +1940,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1921104387}
-    characterCount: 7
+    characterCount: 5
     spriteCount: 0
     spaceCount: 0
     wordCount: 1
