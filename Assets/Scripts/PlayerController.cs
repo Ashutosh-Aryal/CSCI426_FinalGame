@@ -87,6 +87,8 @@ public class PlayerController : MonoBehaviour {
 	private const float MAX_Y_POSITION = 3.0f;
 	private const float MIN_Y_POSITION = -3.38f;
 
+	[SerializeField] SpriteRenderer m_LavaRenderer;
+
     // Start is called before the first frame update
     void Start() {
 		m_Rigidbody2D = GetComponent<Rigidbody2D>();
@@ -457,11 +459,15 @@ public class PlayerController : MonoBehaviour {
 		m_IsDead = true;
 
 		if (m_JumpOverlayObject) m_JumpOverlayObject.SetActive(false);
+
+		if (m_LavaRenderer) m_LavaRenderer.color = Color.black;
 		
 		// turn off particles
 		if (m_RangeDownParticles) Destroy(m_RangeDownParticles);
 		if (m_RangeUpParticles) Destroy(m_RangeUpParticles);
 		if (m_SpeedUpParticles) Destroy(m_SpeedUpParticles);
 		if (m_SlowDownParticles) Destroy(m_SlowDownParticles);
+
+
 	}
 }

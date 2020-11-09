@@ -33888,6 +33888,7 @@ MonoBehaviour:
   m_SlowDownParticles: {fileID: 651307329}
   m_RangeUpParticles: {fileID: 1157598382422361314}
   m_RangeDownParticles: {fileID: 8010664924711607746}
+  m_LavaRenderer: {fileID: 0}
 --- !u!82 &714948381331053628
 AudioSource:
   m_ObjectHideFlags: 0
