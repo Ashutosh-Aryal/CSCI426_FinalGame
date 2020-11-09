@@ -150,14 +150,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 881f950bc694421498f24d7739284b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DefaultEasyProbability: 0.3
+  SecsToMaxDifficulty: 20
   m_StartingRooms:
+  - {fileID: -9170052666245436877, guid: b58ac861391f6af48880a489c612c3f0, type: 3}
+  m_EasyRoomPool:
+  - {fileID: -9170052666245436877, guid: 534426f878539cf4aa29bc127337f08e, type: 3}
   - {fileID: -9170052666245436877, guid: 9f2d9087801968749afbd9142c277b3b, type: 3}
   - {fileID: -9170052666245436877, guid: 6489298f5c8b8874caef4cbe6a224cc8, type: 3}
-  m_RandomRoomPool:
+  m_HardRoomPool:
   - {fileID: -9170052666245436877, guid: b19accabd5773f74e963f923562fb9a7, type: 3}
-  - {fileID: -9170052666245436877, guid: 534426f878539cf4aa29bc127337f08e, type: 3}
   - {fileID: -9170052666245436877, guid: 91d2f87c171798f428ef825b62f4bf6f, type: 3}
-  m_RoomSize: 20
 --- !u!4 &23353547
 Transform:
   m_ObjectHideFlags: 0
@@ -538,7 +541,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Try Again
+  m_text: Try Again (R)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1276,12 +1279,12 @@ PrefabInstance:
     - target: {fileID: 7530423934171474239, guid: 1f34f1c24d1805b4494265d4f98b0e4f,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -3.13
       objectReference: {fileID: 0}
     - target: {fileID: 7530423934171474239, guid: 1f34f1c24d1805b4494265d4f98b0e4f,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.71
+      value: -3.9
       objectReference: {fileID: 0}
     - target: {fileID: 7530423934171474239, guid: 1f34f1c24d1805b4494265d4f98b0e4f,
         type: 3}
