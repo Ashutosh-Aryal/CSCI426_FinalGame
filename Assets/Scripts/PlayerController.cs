@@ -88,9 +88,16 @@ public class PlayerController : MonoBehaviour {
 	private const float MIN_Y_POSITION = -3.38f;
 
 	[SerializeField] SpriteRenderer m_LavaRenderer;
+	[SerializeField] Material m_BurningMaterial;
+	[SerializeField] float m_TimeTillDeath = .20f;
+	float m_CurrDeathTime = 0f;
+	bool m_IsDying = false;
+	bool m_IsBurning = false;
+	bool m_WasLookingLeft = false;
+	Vector3 m_LastPositionAlive;
 
-    // Start is called before the first frame update
-    void Start() {
+	// Start is called before the first frame update
+	void Start() {
 		m_Rigidbody2D = GetComponent<Rigidbody2D>();
 		//m_BoxCollider2D = GetComponent<BoxCollider2D>();
 		m_CircleCollider2D = GetComponent<CircleCollider2D>();
@@ -104,7 +111,31 @@ public class PlayerController : MonoBehaviour {
 
 	private void FixedUpdate() {
 		if (m_IsDead)
+        {
+			if(m_IsBurning)
+            {
+				transform.position = m_LastPositionAlive;
+				m_CurrDeathTime += Time.deltaTime;
+				float dissolveAmount = 0f;
+				if(m_WasLookingLeft)
+                {
+					dissolveAmount = Mathf.Lerp(-2.5f, 3.5f, m_CurrDeathTime / m_TimeTillDeath);
+				}
+				else
+                {
+					dissolveAmount = Mathf.Lerp(3.5f, -2.5f, m_CurrDeathTime / m_TimeTillDeath);
+				}
+				//Debug.Log("dissolve amount: " + dissolveAmount);
+				m_BurningMaterial.SetFloat("_DissolveAmount", dissolveAmount);
+				if (m_CurrDeathTime >= m_TimeTillDeath)
+				{
+					m_CurrDeathTime = m_TimeTillDeath;
+					m_SpriteRenderer.enabled = false;
+					//Destroy(gameObject);
+				}
+			}
 			return;
+		}
 		
 		// check if walking off platform (no jumping in air)
 		if (!m_InAir && m_Rigidbody2D.velocity.y < 0)
@@ -115,7 +146,31 @@ public class PlayerController : MonoBehaviour {
 	void Update() {
 
 		if (m_IsDead)
+        {
+			if (m_IsBurning)
+			{
+				transform.position = m_LastPositionAlive;
+				m_CurrDeathTime += Time.deltaTime;
+				float dissolveAmount = 0f;
+				if (m_WasLookingLeft)
+				{
+					dissolveAmount = Mathf.Lerp(-2.5f, 3.5f, m_CurrDeathTime / m_TimeTillDeath);
+				}
+				else
+				{
+					dissolveAmount = Mathf.Lerp(3.5f, -2.5f, m_CurrDeathTime / m_TimeTillDeath);
+				}
+				//Debug.Log("dissolve amount: " + dissolveAmount);
+				m_BurningMaterial.SetFloat("_DissolveAmount", dissolveAmount);
+				if (m_CurrDeathTime >= m_TimeTillDeath)
+				{
+					m_CurrDeathTime = m_TimeTillDeath;
+					m_SpriteRenderer.enabled = false;
+					//Destroy(gameObject);
+				}
+			}
 			return;
+		}
 
 		// increase jump charge
 		m_CurrentJumpForce = Mathf.Clamp(m_CurrentJumpForce + Time.deltaTime * m_JumpChargeRate,
@@ -469,5 +524,50 @@ public class PlayerController : MonoBehaviour {
 		if (m_SlowDownParticles) Destroy(m_SlowDownParticles);
 
 
+	}
+
+	public void Burn()
+    {
+		Debug.Log("burned");
+		if (m_DeathSFX)
+			m_DeathSFX.Play();
+
+		Camera.main.GetComponent<CameraController>().ShowFinalScore();
+
+		m_CircleCollider2D.enabled = false;
+		m_Rigidbody2D.simulated = false;
+		float percentage = m_CurrentJumpForce / m_CurrentMaxJumpForce;
+		Color currentCubeColor = new Color((m_SafeColor.r * (1 - percentage)) + (m_DangerColor.r * percentage),
+									(m_SafeColor.g * (1 - percentage)) + (m_DangerColor.g * percentage),
+									(m_SafeColor.b * (1 - percentage)) + (m_DangerColor.b * percentage));
+		currentCubeColor.a = 0f;
+		m_SpriteRenderer.material = m_BurningMaterial;
+		m_BurningMaterial.SetColor("_MainColor", currentCubeColor);
+		//m_SpriteRenderer.enabled = false;
+		m_SwordObject.GetComponent<SpriteRenderer>().enabled = false;
+		m_LastPositionAlive = transform.position;
+		m_IsBurning = true;
+		m_IsDead = true;
+
+		bool isCurrentlyLookingLeft = Mathf.Sign(transform.localScale.x) < 0;
+		if(isCurrentlyLookingLeft)
+        {
+			m_BurningMaterial.SetFloat("_DissolveAmount", -2.5f);
+			m_WasLookingLeft = true;
+		}
+		else
+        {
+			m_BurningMaterial.SetFloat("_DissolveAmount", 3.5f);
+			m_WasLookingLeft = false;
+		}
+
+		if (m_JumpOverlayObject) m_JumpOverlayObject.SetActive(false);
+
+		if (m_LavaRenderer) m_LavaRenderer.color = Color.black;
+
+		if (m_RangeDownParticles) Destroy(m_RangeDownParticles);
+		if (m_RangeUpParticles) Destroy(m_RangeUpParticles);
+		if (m_SpeedUpParticles) Destroy(m_SpeedUpParticles);
+		if (m_SlowDownParticles) Destroy(m_SlowDownParticles);
 	}
 }

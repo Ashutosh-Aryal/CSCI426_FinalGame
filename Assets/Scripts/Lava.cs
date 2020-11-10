@@ -52,7 +52,7 @@ public class Lava : MonoBehaviour {
 			enemy.Burn();
             //Destroy(collision.gameObject);
         } else if (collision.gameObject.tag == "Player") {
-			collision.gameObject.GetComponent<PlayerController>().KillPlayer();
+			collision.gameObject.GetComponent<PlayerController>().Burn();
 		}
     }
 }
