@@ -35987,7 +35987,7 @@ MonoBehaviour:
   m_RangeDownParticles: {fileID: 8010664924711607746}
   m_LavaRenderer: {fileID: 0}
   m_BurningMaterial: {fileID: 2100000, guid: 4c4b3356459ee7f4688e17b96cf4d2dc, type: 2}
-  m_TimeTillDeath: 1
+  m_TimeTillDeath: 0.25
 --- !u!82 &714948381331053628
 AudioSource:
   m_ObjectHideFlags: 0
