@@ -16,7 +16,7 @@ public class TextMove : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        m_OriginalPosition = transform.position;
+        m_OriginalPosition = transform.localPosition;
         m_LeftPosition = m_OriginalPosition + Vector3.left * m_Length / 2.0f + Vector3.down * m_Length / 2.0f;
         m_RightPosition = m_OriginalPosition + Vector3.right * m_Length / 2.0f + Vector3.up * m_Length / 2.0f;
         m_RandomTime = Random.Range(1f, 5f);
@@ -40,6 +40,6 @@ public class TextMove : MonoBehaviour
         }
 
         float t = (Mathf.Sin(m_CurrTime * Mathf.Deg2Rad) / 2.0f) + 0.5f; //get [-1, 1] range
-        transform.position = Vector3.Lerp(m_LeftPosition, m_RightPosition, t);
+        transform.localPosition = Vector3.Lerp(m_LeftPosition, m_RightPosition, t);
     }
 }
