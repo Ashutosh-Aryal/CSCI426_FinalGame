@@ -125,6 +125,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Velocity: {x: -4, y: 0}
   m_DeathSFX: {fileID: 0}
+  m_DeathMaterial: {fileID: 2100000, guid: af3f8cd34efd765419874903b8702619, type: 2}
+  m_TimeTillDeath: 1
 --- !u!50 &402691290684530500
 Rigidbody2D:
   serializedVersion: 4
