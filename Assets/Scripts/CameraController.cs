@@ -69,4 +69,12 @@ public class CameraController : MonoBehaviour {
 
 		yield break;
 	}
+
+	IEnumerator CoFadeOutMusic() {
+		yield break;
+	}
+
+	public void SlowDown(float SlowPercentage) { 
+		m_HorizontalMovementSpeed *= 1 - SlowPercentage;
+	}
 }

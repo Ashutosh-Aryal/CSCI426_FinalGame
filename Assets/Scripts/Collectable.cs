@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Collectible : MonoBehaviour {
+public class Collectable : MonoBehaviour {
 	public float FloatAmplitude = .5f;
 	public float FloatSpeed = .5f;
 
+	public AudioSource CollectSound;
+
 	private float m_originHeight;
 	private bool m_goingUp = true;
+	private bool m_destroy = false;
 
     // Start is called before the first frame update
     void Start() {
@@ -16,6 +19,12 @@ public class Collectible : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+		if (CollectSound && CollectSound.isPlaying)
+			return;
+		if (m_destroy) {
+			Destroy(gameObject);
+		}
+
 		// float up and down
         if (m_goingUp) {
 			transform.Translate(Vector2.up * FloatSpeed * Time.deltaTime);
@@ -30,8 +39,13 @@ public class Collectible : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter2D(Collider2D collision) {
-		if (collision.tag == "Player" && GetCollected(collision))
-			Destroy(gameObject);
+		if (collision.tag == "Player" && GetCollected(collision)) {
+			if (CollectSound && !CollectSound.isPlaying)
+				CollectSound.Play();
+			m_destroy = true;
+			GetComponent<SpriteRenderer>().enabled = false;
+			GetComponent<CircleCollider2D>().enabled = false;
+		}
 	}
 
 	// return true if the collectable should be destroyed
