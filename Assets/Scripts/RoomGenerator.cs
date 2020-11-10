@@ -10,6 +10,11 @@ public class RoomGenerator : MonoBehaviour {
 	private float m_difficultyTimer = 0f;
 	private int m_introCounter = 0;
 
+	[Range(0f, 1f)]
+	public float MaxSlowDownProbability = 0.9f;
+	public float SecsToMaxSlowDownProb = 10f;
+	private float m_slowdownTimer = 0f;
+
     [SerializeField] private List<Room> m_StartingRooms;
     [SerializeField] private List<Room> m_EasyRoomPool;
     [SerializeField] private List<Room> m_HardRoomPool;
@@ -40,10 +45,20 @@ public class RoomGenerator : MonoBehaviour {
 		}
     }
 
-    private void FixedUpdate() {
+	private void Update() {
 		// increase difficulty timer if we passed all intro rooms
 		if (m_introCounter >= m_StartingRooms.Count && m_difficultyTimer < SecsToMaxDifficulty)
 			m_difficultyTimer += Time.deltaTime;
+
+		// increase slowdowntimer if we passed all intro rooms
+		if (m_introCounter >= m_StartingRooms.Count && m_slowdownTimer < SecsToMaxSlowDownProb)
+			m_slowdownTimer += Time.deltaTime;
+	}
+
+	private void FixedUpdate() {
+		/*// increase difficulty timer if we passed all intro rooms
+		if (m_introCounter >= m_StartingRooms.Count && m_difficultyTimer < SecsToMaxDifficulty)
+			m_difficultyTimer += Time.deltaTime;*/
 
 		// if there are less than 3 rooms then make sure that we spawn more
 		while (m_RoomQueue.Count < 3)
@@ -101,12 +116,21 @@ public class RoomGenerator : MonoBehaviour {
 			room = Instantiate(m_EasyRoomPool[randomIndex], tempSpawnPosition, Quaternion.identity);
 		}
 
-		//int randomIndex = Random.Range(0, m_EasyRoomPool.Count);
-		//Vector2 tempSpawnPosition = m_RoomSpawnPosition + (Vector2.right * (ROOM_CELL_WIDTH * ((m_EasyRoomPool[randomIndex].NumUnits / 2f) - 0.5f)));
-		//Room room = Instantiate(m_EasyRoomPool[randomIndex], tempSpawnPosition, Quaternion.identity);
-		//Room room = Instantiate(m_EasyRoomPool[randomIndex], m_RoomSpawnPosition, Quaternion.identity);
+		// check if we spawn slowdown collectibles
+		float slowdownProb = Mathf.Min(MaxSlowDownProbability, m_slowdownTimer / SecsToMaxSlowDownProb);
+		bool spawnSlowdown = slowdownProb > 0f && UnityEngine.Random.Range(0f, 1f) < slowdownProb;
+		if (!spawnSlowdown) {
+			foreach (var item in room.LavaCollectables)
+				if (item)
+					item.gameObject.SetActive(false);
+		}
+
+
 		m_RoomQueue.Enqueue(room);
 		m_RoomSpawnPosition += Vector2.right * ROOM_CELL_WIDTH * room.NumUnits;
-		//m_RoomSpawnPosition += Vector2.right * ROOM_CELL_WIDTH;
+	}
+
+	public void MarkSlowdown() {
+		m_slowdownTimer = 0f;
 	}
 }
