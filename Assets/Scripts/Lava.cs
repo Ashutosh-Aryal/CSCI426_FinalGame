@@ -48,7 +48,9 @@ public class Lava : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D collision) {
         
 		if (collision.tag == "Enemy") {
-            Destroy(collision.gameObject);
+			Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+			enemy.Burn();
+            //Destroy(collision.gameObject);
         } else if (collision.gameObject.tag == "Player") {
 			collision.gameObject.GetComponent<PlayerController>().KillPlayer();
 		}

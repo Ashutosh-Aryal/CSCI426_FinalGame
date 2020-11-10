@@ -16,10 +16,11 @@ public class Enemy : MonoBehaviour
 
     SpriteRenderer m_SpriteRenderer;
     BoxCollider2D m_BoxCollider2D;
-    [SerializeField] Material m_DeathMaterial;
+    [SerializeField] Material m_BurningMaterial;
     [SerializeField] float m_TimeTillDeath = .8f;
     float m_CurrDeathTime = 0f;
     bool m_IsDying = false;
+    bool m_IsBurning = false;
     Vector3 m_LastPositionAlive;
 
     // Start is called before the first frame update
@@ -34,15 +35,23 @@ public class Enemy : MonoBehaviour
     void Update() {
         if(m_IsDying)
         {
-            transform.position = m_LastPositionAlive;
-            m_CurrDeathTime += Time.deltaTime;
-            float dissolveAmount = Mathf.Lerp(3.5f, -2.5f, m_CurrDeathTime / m_TimeTillDeath);
-            Debug.Log("dissolve amount: " + dissolveAmount);
-            m_DeathMaterial.SetFloat("_DissolveAmount", dissolveAmount);
-            if(m_CurrDeathTime >= m_TimeTillDeath)
+            if(m_IsBurning)
             {
-                Destroy(gameObject);
+                transform.position = m_LastPositionAlive;
+                m_CurrDeathTime += Time.deltaTime;
+                float dissolveAmount = Mathf.Lerp(3.5f, -2.5f, m_CurrDeathTime / m_TimeTillDeath);
+                //Debug.Log("dissolve amount: " + dissolveAmount);
+                m_BurningMaterial.SetFloat("_DissolveAmount", dissolveAmount);
+                if (m_CurrDeathTime >= m_TimeTillDeath)
+                {
+                    Destroy(gameObject);
+                }
             }
+            else
+            {
+                //assume killed by sword
+            }
+
         }
         else
         {
@@ -97,12 +106,20 @@ public class Enemy : MonoBehaviour
             m_DeathSFX.Play();
 
         m_IsDying = true;
-        m_SpriteRenderer.material = m_DeathMaterial;
-        m_DeathMaterial.SetFloat("_DissolveAmount", 3.5f);
         m_BoxCollider2D.enabled = false;
         m_LastPositionAlive = transform.position;
-        //Destroy(gameObject);
+        Destroy(gameObject);
 	}
+
+    public void Burn()
+    {
+        m_IsDying = true;
+        m_IsBurning = true;
+        m_SpriteRenderer.material = m_BurningMaterial;
+        m_BurningMaterial.SetFloat("_DissolveAmount", 3.5f);
+        m_BoxCollider2D.enabled = false;
+        m_LastPositionAlive = transform.position;
+    }
 
 	// activate self when on screen
 	private void OnBecameVisible() {

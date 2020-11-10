@@ -73,7 +73,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 23
   m_Sprite: {fileID: 21300000, guid: 95c05578aae01bb40bc7b396026d303c, type: 3}
   m_Color: {r: 1, g: 0.25853416, b: 0, a: 1}
   m_FlipX: 0
@@ -125,8 +125,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Velocity: {x: -4, y: 0}
   m_DeathSFX: {fileID: 0}
-  m_DeathMaterial: {fileID: 2100000, guid: af3f8cd34efd765419874903b8702619, type: 2}
-  m_TimeTillDeath: 1
+  m_BurningMaterial: {fileID: 2100000, guid: af3f8cd34efd765419874903b8702619, type: 2}
+  m_TimeTillDeath: 0.25
 --- !u!50 &402691290684530500
 Rigidbody2D:
   serializedVersion: 4
