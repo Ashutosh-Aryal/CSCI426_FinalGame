@@ -125,4 +125,8 @@ public class Enemy : MonoBehaviour
 	private void OnBecameVisible() {
 		m_OnScreen = true;
 	}
+
+	public bool IsDead() {
+		return m_IsDying;
+	}
 }

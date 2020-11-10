@@ -405,7 +405,10 @@ public class PlayerController : MonoBehaviour {
 		if (collision.gameObject.tag == "Sword")
 			return;
 
-		bool playerShouldDie = collision.gameObject.tag == "Hazard" || collision.gameObject.tag == "Enemy";
+		bool playerShouldDie = collision.gameObject.tag == "Hazard";
+		// only die from enemy if the enemy is not dead
+		if (!playerShouldDie && collision.gameObject.tag == "Enemy" && !collision.gameObject.GetComponent<Enemy>().IsDead())
+			playerShouldDie = true;
 
 		if (playerShouldDie) {
 
