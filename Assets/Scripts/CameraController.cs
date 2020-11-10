@@ -15,6 +15,8 @@ public class CameraController : MonoBehaviour {
     [SerializeField] private float m_HorizontalMovementSpeed = 1f;
     [SerializeField] private float m_HorizontalAcceleration = 0.1f;
 
+	[SerializeField] private RoomGenerator m_RoomGen;
+
 	private const float MAX_HORIZONTAL_SPEED = 4.8f;
 
     private bool m_ShowingFinalScore = false;
@@ -76,5 +78,7 @@ public class CameraController : MonoBehaviour {
 
 	public void SlowDown(float SlowPercentage) { 
 		m_HorizontalMovementSpeed *= 1 - SlowPercentage;
+		if (m_RoomGen)
+			m_RoomGen.MarkSlowdown();
 	}
 }
