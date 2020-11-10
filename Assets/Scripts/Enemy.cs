@@ -29,6 +29,8 @@ public class Enemy : MonoBehaviour
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
         m_BoxCollider2D = GetComponent<BoxCollider2D>();
         m_CurrDeathTime = 0f;
+		// unparent self so that we dont get destroyed when our room gets destroyed
+		transform.parent = null;
     }
 
     // Update is called once per frame

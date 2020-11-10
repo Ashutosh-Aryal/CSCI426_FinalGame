@@ -64,6 +64,7 @@ public class PlayerController : MonoBehaviour {
     Rigidbody2D m_Rigidbody2D = null;
     //BoxCollider2D m_BoxCollider2D = null;
 	CircleCollider2D m_CircleCollider2D = null;
+	EdgeCollider2D m_EdgeCollider2D = null;
     GameObject m_SwordObject = null;
     SpriteRenderer m_SpriteRenderer = null;
 
@@ -101,6 +102,7 @@ public class PlayerController : MonoBehaviour {
 		m_Rigidbody2D = GetComponent<Rigidbody2D>();
 		//m_BoxCollider2D = GetComponent<BoxCollider2D>();
 		m_CircleCollider2D = GetComponent<CircleCollider2D>();
+		m_EdgeCollider2D = GetComponent<EdgeCollider2D>();
 		m_SwordObject = GameObject.FindGameObjectWithTag("Sword");
 		m_SpriteRenderer = GetComponent<SpriteRenderer>();
 		m_AttackRange = m_MaxAttackRange;
@@ -136,7 +138,9 @@ public class PlayerController : MonoBehaviour {
 			}
 			return;
 		}
-		
+		// checks for wall collisions
+		//UpdateAllowedMovementDirection();
+
 		// check if walking off platform (no jumping in air)
 		if (!m_InAir && m_Rigidbody2D.velocity.y < 0)
 			m_InAir = true;
@@ -335,37 +339,69 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void UpdateAllowedMovementDirection() {
-
         // if moving left but were blocked, check if we are free now
         RaycastHit2D[] hits = new RaycastHit2D[1];
 
-		//if (m_ShouldMoveLeft && !m_CanMoveLeft && m_BoxCollider2D.Cast(Vector2.left, hits, .1f) < 1)
-		if (m_ShouldMoveLeft && !m_CanMoveLeft && m_CircleCollider2D.Cast(Vector2.left, hits, .1f) < 1)
-			m_CanMoveLeft = true;
-		else if (m_ShouldMoveLeft && !m_CanMoveLeft) { 
-			foreach (var hit in hits) { 
-				if (hit.transform.tag == "Hazard") {
-					m_CanMoveLeft = true;
-					break;
+		//if (m_Rigidbody2D.velocity.y >= 0) {
+		if (true) {
+			//if (m_ShouldMoveLeft && !m_CanMoveLeft && m_BoxCollider2D.Cast(Vector2.left, hits, .1f) < 1)
+			if (m_ShouldMoveLeft && !m_CanMoveLeft && m_CircleCollider2D.Cast(Vector2.left, hits, .1f) < 1)
+				m_CanMoveLeft = true;
+			else if (m_ShouldMoveLeft && !m_CanMoveLeft) { 
+				foreach (var hit in hits) { 
+					if (hit.transform.tag == "Hazard") {
+						m_CanMoveLeft = true;
+						break;
+					}
+				}
+			} 
+		}
+		else {
+			if (m_ShouldMoveLeft && !m_CanMoveLeft && m_EdgeCollider2D.Cast(Vector2.left, hits, .1f) < 1)
+				m_CanMoveLeft = true;
+			else if (m_ShouldMoveLeft && !m_CanMoveLeft) {
+				foreach (var hit in hits) {
+					if (hit.transform.tag == "Hazard") {
+						m_CanMoveLeft = true;
+						break;
+					}
 				}
 			}
 		}
 
-		//if (m_ShouldMoveRight && !m_CanMoveRight && m_BoxCollider2D.Cast(Vector2.right, hits, .1f) < 1)
-		if (m_ShouldMoveRight && !m_CanMoveRight && m_CircleCollider2D.Cast(Vector2.right, hits, .1f) < 1)
-			m_CanMoveRight = true;
-		else if (m_ShouldMoveRight && !m_CanMoveRight) {
-			foreach (var hit in hits) {
-				if (hit.transform.tag == "Hazard") {
-					m_CanMoveRight = true;
-					break;
+		//if (m_Rigidbody2D.velocity.y >= 0) {
+		if (true) {
+			//if (m_ShouldMoveRight && !m_CanMoveRight && m_BoxCollider2D.Cast(Vector2.right, hits, .1f) < 1)
+			if (m_ShouldMoveRight && !m_CanMoveRight && m_CircleCollider2D.Cast(Vector2.right, hits, .1f) < 1)
+				m_CanMoveRight = true;
+			else if (m_ShouldMoveRight && !m_CanMoveRight) {
+				foreach (var hit in hits) {
+					if (hit.transform.tag == "Hazard") {
+						m_CanMoveRight = true;
+						break;
+					}
+				}
+			}
+		}
+		else {
+			if (m_ShouldMoveRight && !m_CanMoveRight && m_EdgeCollider2D.Cast(Vector2.right, hits, .1f) < 1)
+				m_CanMoveRight = true;
+			else if (m_ShouldMoveRight && !m_CanMoveRight) {
+				foreach (var hit in hits) {
+					if (hit.transform.tag == "Hazard") {
+						m_CanMoveRight = true;
+						break;
+					}
 				}
 			}
 		}
 
 		// if considered in air and falling, check if we are actually landing on ground
+		//if (m_InAir && m_Rigidbody2D.velocity.y <= 0 && m_BoxCollider2D.Cast(Vector2.down, hits, .1f) >= 1) {
 		if (m_InAir && m_Rigidbody2D.velocity.y <= 0 && m_CircleCollider2D.Cast(Vector2.down, hits, .1f) >= 1) {
-			foreach (var hit in hits) { 
+			foreach (var hit in hits) {
+				if (hit.transform.position.y > transform.position.y)
+					continue;
 				if (hit.transform.tag == "Ground" || hit.transform.tag == "Obstacle") {
 					m_InAir = false;
 					break;
@@ -414,7 +450,7 @@ public class PlayerController : MonoBehaviour {
 
 			KillPlayer();
 			
-			if(m_DeathSFX)
+			if (m_DeathSFX)
 				m_DeathSFX.Play();
 
 			return;
@@ -436,6 +472,7 @@ public class PlayerController : MonoBehaviour {
 
 			//bool isCollidingWithRightWall = m_ShouldMoveRight && m_CanMoveRight && contact.normal == Vector2.left;
 			bool isCollidingWithRightWall = m_ShouldMoveRight && m_CanMoveRight && Vector2.Angle(contact.normal, Vector2.left) <= 60f;
+
 			//bool isCollidingWithLeftWall = m_ShouldMoveLeft && m_CanMoveLeft && contact.normal == Vector2.right;
 			bool isCollidingWithLeftWall = m_ShouldMoveLeft && m_CanMoveLeft && Vector2.Angle(contact.normal, Vector2.right) <= 60f;
 
@@ -538,6 +575,7 @@ public class PlayerController : MonoBehaviour {
 		Camera.main.GetComponent<CameraController>().ShowFinalScore();
 
 		m_CircleCollider2D.enabled = false;
+		//m_BoxCollider2D.enabled = false;
 		m_Rigidbody2D.simulated = false;
 		float percentage = m_CurrentJumpForce / m_CurrentMaxJumpForce;
 		Color currentCubeColor = new Color((m_SafeColor.r * (1 - percentage)) + (m_DangerColor.r * percentage),
