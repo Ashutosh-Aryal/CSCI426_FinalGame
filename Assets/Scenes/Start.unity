@@ -312,7 +312,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 333}
+  m_AnchoredPosition: {x: 0, y: 328}
   m_SizeDelta: {x: 1400, y: 350}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &213111138
@@ -782,7 +782,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &706758876
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1983,7 +1983,7 @@ GameObject:
   - component: {fileID: 1933505499}
   - component: {fileID: 1933505498}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Controls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2005,7 +2005,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 77}
+  m_AnchoredPosition: {x: 0, y: -54}
   m_SizeDelta: {x: 1400, y: 350}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1933505498
@@ -2027,24 +2027,25 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'A / D / Left Arrow / Right Arrow: Move left and right.
+  m_text: 'A/Left & D/Right: Move player.
+
+    
+
+    W/Up: Jump. Your jump''s power
+    charges up over time. Every time you jump, your sword''s range decreases.
+
+    
+
+    Space
+    or Shift: Swing sword in front of you. Every time you swing, the jump charge
+    increases even faster.
 
 
-    W / Up Arrow:
-    Jump. Your jump boots'' power charges up over time. If they indicate red, then
-    you will hit the roof spikes. Jumps reduce attack range.
-
-
-    Shift / Space:
-    Swing sword-hat. Swings reset jump charge and slow movement speed.
-
-
-    Lava
-    and enemies are orange and will end you in 1 touch. Killing enemies increases
-    move speed instead of reducing from the attack swing.'
+    Killing enemies resets your attack range, and jump
+    charge rate.'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 7083688249a86cc4d86b1c8d3aba882e, type: 2}
-  m_sharedMaterial: {fileID: -4559885884773094010, guid: 7083688249a86cc4d86b1c8d3aba882e,
+  m_fontAsset: {fileID: 11400000, guid: 56e7c03015dfb894d90f3ad80c73fbd4, type: 2}
+  m_sharedMaterial: {fileID: -2074022673547215178, guid: 56e7c03015dfb894d90f3ad80c73fbd4,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -2087,7 +2088,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 263
+  m_firstOverflowCharacterIndex: 246
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -2111,12 +2112,12 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1933505498}
-    characterCount: 425
+    characterCount: 310
     spriteCount: 0
-    spaceCount: 80
-    wordCount: 73
+    spaceCount: 53
+    wordCount: 53
     linkCount: 0
-    lineCount: 12
+    lineCount: 9
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
@@ -2456,7 +2457,7 @@ GameObject:
   - component: {fileID: 2056363788}
   - component: {fileID: 2056363787}
   m_Layer: 5
-  m_Name: Text (TMP) (2)
+  m_Name: Lore
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2478,7 +2479,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 316}
+  m_AnchoredPosition: {x: 0, y: 264}
   m_SizeDelta: {x: 1400, y: 350}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2056363787
