@@ -94,6 +94,7 @@ public class PlayerController : MonoBehaviour {
 
 	[SerializeField] SpriteRenderer m_LavaRenderer;
 	[SerializeField] Material m_BurningMaterial;
+	[SerializeField] Material m_DissolveMaterial;
 	[SerializeField] float m_TimeTillDeath = .20f;
 	float m_CurrDeathTime = 0f;
 	bool m_IsDying = false;
@@ -118,7 +119,7 @@ public class PlayerController : MonoBehaviour {
 	private void FixedUpdate() {
 		if (m_IsDead)
         {
-			if(m_IsBurning)
+			/*if(m_IsBurning)
             {
 				transform.position = m_LastPositionAlive;
 				m_CurrDeathTime += Time.deltaTime;
@@ -139,7 +140,7 @@ public class PlayerController : MonoBehaviour {
 					m_SpriteRenderer.enabled = false;
 					//Destroy(gameObject);
 				}
-			}
+			}*/
 			return;
 		}
 		// checks for wall collisions
@@ -170,6 +171,19 @@ public class PlayerController : MonoBehaviour {
 				}
 				//Debug.Log("dissolve amount: " + dissolveAmount);
 				m_BurningMaterial.SetFloat("_DissolveAmount", dissolveAmount);
+				if (m_CurrDeathTime >= m_TimeTillDeath)
+				{
+					m_CurrDeathTime = m_TimeTillDeath;
+					m_SpriteRenderer.enabled = false;
+					//Destroy(gameObject);
+				}
+			}
+			else
+            {
+				transform.position = m_LastPositionAlive;
+				m_CurrDeathTime += Time.deltaTime;
+				float dissolveAmount = Mathf.Lerp(-2.5f, 3.5f, m_CurrDeathTime / m_TimeTillDeath);
+				m_DissolveMaterial.SetFloat("_DissolveAmount", dissolveAmount);
 				if (m_CurrDeathTime >= m_TimeTillDeath)
 				{
 					m_CurrDeathTime = m_TimeTillDeath;
@@ -559,12 +573,22 @@ public class PlayerController : MonoBehaviour {
 			m_DeathSFX.Play();
 
         Camera.main.GetComponent<CameraController>().ShowFinalScore();
-		
+
+		float percentage = m_CurrentJumpForce / m_CurrentMaxJumpForce;
+		Color currentCubeColor = new Color((m_SafeColor.r * (1 - percentage)) + (m_DangerColor.r * percentage),
+									(m_SafeColor.g * (1 - percentage)) + (m_DangerColor.g * percentage),
+									(m_SafeColor.b * (1 - percentage)) + (m_DangerColor.b * percentage));
+		currentCubeColor.a = 0f;
+
 		//m_BoxCollider2D.enabled = false;
 		m_CircleCollider2D.enabled = false;
 		m_Rigidbody2D.simulated = false;
-		m_SpriteRenderer.enabled = false;
+		m_SpriteRenderer.material = m_DissolveMaterial;
+		m_DissolveMaterial.SetColor("_MainColor", currentCubeColor);
+		//m_SpriteRenderer.enabled = false;
 		m_SwordObject.GetComponent<SpriteRenderer>().enabled = false;
+		m_LastPositionAlive = transform.position;
+		m_IsBurning = false;
 		m_IsDead = true;
 
 		if (m_JumpOverlayObject) m_JumpOverlayObject.SetActive(false);
