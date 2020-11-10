@@ -17,7 +17,9 @@ public class Enemy : MonoBehaviour
     SpriteRenderer m_SpriteRenderer;
     BoxCollider2D m_BoxCollider2D;
     [SerializeField] Material m_BurningMaterial;
+    [SerializeField] Material m_DissolveMaterial;
     [SerializeField] float m_TimeTillDeath = .8f;
+    Color m_OriginalColor;
     float m_CurrDeathTime = 0f;
     bool m_IsDying = false;
     bool m_IsBurning = false;
@@ -31,6 +33,7 @@ public class Enemy : MonoBehaviour
         m_CurrDeathTime = 0f;
 		// unparent self so that we dont get destroyed when our room gets destroyed
 		transform.parent = null;
+        m_OriginalColor = m_SpriteRenderer.color;
     }
 
     // Update is called once per frame
@@ -51,7 +54,15 @@ public class Enemy : MonoBehaviour
             }
             else
             {
-                //assume killed by sword
+                transform.position = m_LastPositionAlive;
+                m_CurrDeathTime += Time.deltaTime;
+                float dissolveAmount = Mathf.Lerp(-2.5f, 3.5f, m_CurrDeathTime / m_TimeTillDeath);
+                //Debug.Log("dissolve amount" + dissolveAmount);
+                m_DissolveMaterial.SetFloat("_DissolveAmount", dissolveAmount);
+                if (m_CurrDeathTime >= m_TimeTillDeath)
+                {
+                    Destroy(gameObject);
+                }
             }
 
         }
@@ -108,9 +119,12 @@ public class Enemy : MonoBehaviour
             m_DeathSFX.Play();
 
         m_IsDying = true;
+        m_IsBurning = false;
         m_BoxCollider2D.enabled = false;
         m_LastPositionAlive = transform.position;
-        Destroy(gameObject);
+        m_SpriteRenderer.material = m_DissolveMaterial;
+        m_DissolveMaterial.SetFloat("_DissolveAmount", -2.5f);
+        //Destroy(gameObject);
 	}
 
     public void Burn()
