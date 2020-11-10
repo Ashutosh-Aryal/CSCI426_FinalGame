@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour {
 	[Header("Jump")]
 
 	[SerializeField] private GameObject m_JumpOverlayObject;
+	[SerializeField] private JumpTrailObj[] m_JumpOverlayTrailObjs;
 	
 	[SerializeField] private float m_CurrentJumpForce = 4f;
 	[SerializeField] private float m_JumpChargeRate = 6f;
@@ -74,6 +75,9 @@ public class PlayerController : MonoBehaviour {
 	private bool m_AttackPressed = false;
 	private bool m_AttackHeld = false;
 	private bool m_AttackReleased = false;
+	private bool m_DownAttackPressed = false;
+	private bool m_DownAttackHeld = false;
+	private bool m_DownAttackReleased = false;
 	private bool m_CanMoveRight = true;
 	private bool m_CanMoveLeft = true;
 	private bool m_IsDead = false;
@@ -205,7 +209,11 @@ public class PlayerController : MonoBehaviour {
 		m_AttackPressed = (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.RightShift));
 		m_AttackReleased = (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.Space) || Input.GetKeyUp(KeyCode.RightShift));
 
-        bool isRightCurrentlyHeld = (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D));
+		m_DownAttackHeld = (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S));
+		m_DownAttackPressed = (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S));
+		m_DownAttackReleased = (Input.GetKeyUp(KeyCode.DownArrow) || Input.GetKeyUp(KeyCode.S));
+
+		bool isRightCurrentlyHeld = (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D));
         bool isLeftCurrentlyHeld = (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A));
 
         m_ShouldMoveRight = isRightCurrentlyHeld && !isLeftCurrentlyHeld;
@@ -272,6 +280,8 @@ public class PlayerController : MonoBehaviour {
 			// NOTE: test using speed-up sound to test increase jump effect
 			if (m_SpeedUpSFX)
 				m_SpeedUpSFX.Play();
+			foreach (var trail in m_JumpOverlayTrailObjs)
+				trail.ShowSpeedUp();
 
 			// TODO: Probably should replace the sound effects at some point with something that works better for increasing jump charge rate
 
@@ -343,7 +353,6 @@ public class PlayerController : MonoBehaviour {
         RaycastHit2D[] hits = new RaycastHit2D[1];
 
 		//if (m_Rigidbody2D.velocity.y >= 0) {
-		if (true) {
 			//if (m_ShouldMoveLeft && !m_CanMoveLeft && m_BoxCollider2D.Cast(Vector2.left, hits, .1f) < 1)
 			if (m_ShouldMoveLeft && !m_CanMoveLeft && m_CircleCollider2D.Cast(Vector2.left, hits, .1f) < 1)
 				m_CanMoveLeft = true;
@@ -355,7 +364,7 @@ public class PlayerController : MonoBehaviour {
 					}
 				}
 			} 
-		}
+		/*}
 		else {
 			if (m_ShouldMoveLeft && !m_CanMoveLeft && m_EdgeCollider2D.Cast(Vector2.left, hits, .1f) < 1)
 				m_CanMoveLeft = true;
@@ -367,10 +376,9 @@ public class PlayerController : MonoBehaviour {
 					}
 				}
 			}
-		}
+		}*/
 
 		//if (m_Rigidbody2D.velocity.y >= 0) {
-		if (true) {
 			//if (m_ShouldMoveRight && !m_CanMoveRight && m_BoxCollider2D.Cast(Vector2.right, hits, .1f) < 1)
 			if (m_ShouldMoveRight && !m_CanMoveRight && m_CircleCollider2D.Cast(Vector2.right, hits, .1f) < 1)
 				m_CanMoveRight = true;
@@ -382,7 +390,7 @@ public class PlayerController : MonoBehaviour {
 					}
 				}
 			}
-		}
+		/*}
 		else {
 			if (m_ShouldMoveRight && !m_CanMoveRight && m_EdgeCollider2D.Cast(Vector2.right, hits, .1f) < 1)
 				m_CanMoveRight = true;
@@ -394,7 +402,7 @@ public class PlayerController : MonoBehaviour {
 					}
 				}
 			}
-		}
+		}*/
 
 		// if considered in air and falling, check if we are actually landing on ground
 		//if (m_InAir && m_Rigidbody2D.velocity.y <= 0 && m_BoxCollider2D.Cast(Vector2.down, hits, .1f) >= 1) {
@@ -433,6 +441,8 @@ public class PlayerController : MonoBehaviour {
 		SpriteRenderer jumpOverlaySpriteRenderer = m_JumpOverlayObject.GetComponent<SpriteRenderer>();
 		currentCubeColor.a = jumpOverlaySpriteRenderer.color.a;
 		jumpOverlaySpriteRenderer.color = currentCubeColor;
+		foreach (var trail in m_JumpOverlayTrailObjs)
+			trail.SetColor(currentCubeColor);
 	}
 
 	// process special collision events
@@ -517,10 +527,14 @@ public class PlayerController : MonoBehaviour {
 			m_KillSFX.Play();
 
 		// NOTE: testing the speed down sound for reducing jump-charge speed
-		if (m_SlowDownSFX && m_JumpChargeRate != m_InitialJumpChargeRate)
-			m_SlowDownSFX.Play();
-		// reset jump charge rate
-		m_JumpChargeRate = m_InitialJumpChargeRate;
+		if (m_JumpChargeRate != m_InitialJumpChargeRate) {
+			if (m_SlowDownSFX)
+				m_SlowDownSFX.Play();
+			foreach (var trail in m_JumpOverlayTrailObjs)
+				trail.ShowSlowDown();
+			// reset jump charge rate
+			m_JumpChargeRate = m_InitialJumpChargeRate;
+		}
 
 		/*// show particle effects for speeding up
 		if (!m_IsDead && m_SpeedUpParticles) {
@@ -563,7 +577,8 @@ public class PlayerController : MonoBehaviour {
 		if (m_SpeedUpParticles) Destroy(m_SpeedUpParticles);
 		if (m_SlowDownParticles) Destroy(m_SlowDownParticles);
 
-
+		foreach (var trail in m_JumpOverlayTrailObjs)
+			Destroy(trail.gameObject);
 	}
 
 	public void Burn()
