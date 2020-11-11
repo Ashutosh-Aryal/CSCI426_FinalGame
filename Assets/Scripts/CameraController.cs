@@ -14,14 +14,23 @@ public class CameraController : MonoBehaviour {
 	[SerializeField] private float m_TextSpeed = 4f;
     [SerializeField] private float m_HorizontalMovementSpeed = 1f;
     [SerializeField] private float m_HorizontalAcceleration = 0.1f;
+	[SerializeField] private float m_MaxScreenShakeIntensity = 0.1f;
 
 	[SerializeField] private RoomGenerator m_RoomGen;
 	[SerializeField] private Lava m_Lava;
+
+	[SerializeField] private GameObject m_PlayerObject;
 
 	private const float MAX_HORIZONTAL_SPEED = 4.8f;
 
     private bool m_ShowingFinalScore = false;
     private bool m_IsPlayerDead = false;
+
+	private Vector3 m_NormalPosition;
+
+    private void Start() {
+		m_NormalPosition = transform.localPosition;
+    }
 
     // Update is called once per frame
     void Update() {
@@ -32,7 +41,12 @@ public class CameraController : MonoBehaviour {
 
 		if (!m_IsPlayerDead) {
 			transform.Translate(m_HorizontalMovementSpeed * Time.deltaTime, 0, 0);
-			m_HorizontalMovementSpeed += m_HorizontalAcceleration * Time.deltaTime;
+
+			m_NormalPosition.x += m_HorizontalMovementSpeed * Time.deltaTime;
+
+            m_HorizontalMovementSpeed += m_HorizontalAcceleration * Time.deltaTime;
+
+			AddScreenShake();
 		}
 		else {
 			var lava = GetComponentInChildren<Lava>();
@@ -42,8 +56,28 @@ public class CameraController : MonoBehaviour {
 		}
 	}
 
-	// shows death screen
-	public void ShowFinalScore() {
+    private void AddScreenShake() {
+
+        Camera myCamera = Camera.main;
+        Vector3 myScreenPosition = myCamera.WorldToScreenPoint(m_PlayerObject.transform.position);
+        float horizontalMidpoint = myCamera.pixelWidth / 2.0f;
+
+        if (myScreenPosition.x >= horizontalMidpoint) {
+            transform.localPosition = m_NormalPosition; return;
+        }
+
+        Bounds lavaBounds = GetComponentInChildren<Lava>().gameObject.GetComponent<BoxCollider2D>().bounds;
+        Vector3 closestLavaScreenPositionFromPlayer = myCamera.WorldToScreenPoint(lavaBounds.ClosestPoint(m_PlayerObject.transform.position));
+
+        float horizontalDistanceFromLavaToMidpoint = horizontalMidpoint - closestLavaScreenPositionFromPlayer.x;
+
+        float ratio = Mathf.Abs(horizontalMidpoint - myCamera.WorldToScreenPoint(m_PlayerObject.transform.position).x) / horizontalDistanceFromLavaToMidpoint;
+
+        transform.localPosition = new Vector3(m_NormalPosition.x, m_NormalPosition.y + Random.Range(-ratio * m_MaxScreenShakeIntensity, ratio * m_MaxScreenShakeIntensity), m_NormalPosition.z);
+    }
+
+    // shows death screen
+    public void ShowFinalScore() {
 
 		m_IsPlayerDead = true;
 		m_CanvasObject.GetComponent<UI>().StopTimer();
