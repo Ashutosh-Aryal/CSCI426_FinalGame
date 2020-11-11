@@ -351,9 +351,8 @@ MonoBehaviour:
     Killing enemies resets your attack range, and jump
     charge rate.'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 7083688249a86cc4d86b1c8d3aba882e, type: 2}
-  m_sharedMaterial: {fileID: -4559885884773094010, guid: 7083688249a86cc4d86b1c8d3aba882e,
-    type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -384,7 +383,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 32
   m_textAlignment: 257
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -424,7 +423,7 @@ MonoBehaviour:
     spaceCount: 55
     wordCount: 53
     linkCount: 0
-    lineCount: 12
+    lineCount: 11
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
@@ -2708,7 +2707,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -184}
+  m_AnchoredPosition: {x: 0, y: -131}
   m_SizeDelta: {x: 1400, y: 350}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1933505498
@@ -2732,18 +2731,17 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Credits:
 
-    - Richard Flores
+    Richard Flores
 
-    - Richard Ortega-Amezcua
+    Richard Ortega-Amezcua
 
-    - Ashu
+    Ashutosh
+    Aryal
 
-    -
-    Denilson'
+    Denilson Mirafuentes'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 7083688249a86cc4d86b1c8d3aba882e, type: 2}
-  m_sharedMaterial: {fileID: -4559885884773094010, guid: 7083688249a86cc4d86b1c8d3aba882e,
-    type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2774,7 +2772,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 32
   m_textAlignment: 257
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -2809,10 +2807,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1933505498}
-    characterCount: 68
+    characterCount: 82
     spriteCount: 0
-    spaceCount: 10
-    wordCount: 11
+    spaceCount: 8
+    wordCount: 9
     linkCount: 0
     lineCount: 5
     pageCount: 1
@@ -3176,7 +3174,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 264}
+  m_AnchoredPosition: {x: 0, y: 205}
   m_SizeDelta: {x: 1400, y: 350}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2056363787
@@ -3202,9 +3200,8 @@ MonoBehaviour:
     have a chance to escape and tell the world about your abilities... Now go! Warn
     the people about a pair of jump boots and a sword-hat!
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 7083688249a86cc4d86b1c8d3aba882e, type: 2}
-  m_sharedMaterial: {fileID: -4559885884773094010, guid: 7083688249a86cc4d86b1c8d3aba882e,
-    type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3235,7 +3232,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 32
   m_textAlignment: 258
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -3246,7 +3243,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 165
+  m_firstOverflowCharacterIndex: 198
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
