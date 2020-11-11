@@ -59,7 +59,7 @@ public class CameraController : MonoBehaviour {
 
         Camera myCamera = Camera.main;
         Vector3 myScreenPosition = myCamera.WorldToScreenPoint(m_PlayerObject.transform.position);
-        float horizontalMidpoint = myCamera.pixelWidth / 2.0f;
+        float horizontalMidpoint = myCamera.pixelWidth / 3.25f;
 
         if (myScreenPosition.x >= horizontalMidpoint) {
             transform.localPosition = m_NormalPosition; return;
