@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee8c305219258aa4992ff1b2e781ea83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FloatAmplitude: 0.5
+  FloatAmplitude: 0.3
   FloatSpeed: 0.5
   CollectSound: {fileID: 1668215771757413217}
   SlowDownPercent: 0.25

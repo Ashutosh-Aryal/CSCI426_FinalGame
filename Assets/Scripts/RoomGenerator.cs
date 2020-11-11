@@ -131,6 +131,13 @@ public class RoomGenerator : MonoBehaviour {
 	}
 
 	public void MarkSlowdown() {
+		// reset timer for slowdown
 		m_slowdownTimer = 0f;
+		foreach (var room in m_RoomQueue)
+			// clear all other slowdowns
+			if (room)
+				foreach (var item in room.LavaCollectables)
+				if (item)
+					item.gameObject.SetActive(false);
 	}
 }
