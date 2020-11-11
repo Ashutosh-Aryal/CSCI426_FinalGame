@@ -8,8 +8,7 @@ public class CameraController : MonoBehaviour {
     [SerializeField] private GameObject m_CanvasObject;
 
     [SerializeField] private RectTransform m_TimeTextRectTransform;
-
-	[SerializeField] private Vector2 m_TargetTextPosition;
+    [SerializeField] private RectTransform m_TimeTextRectGoalTransform;
 
 	[SerializeField] private float m_TextSpeed = 4f;
     [SerializeField] private float m_HorizontalMovementSpeed = 1f;
@@ -57,10 +56,11 @@ public class CameraController : MonoBehaviour {
 		m_ShowingFinalScore = true;
 		
 		while (true) {
-			m_TimeTextRectTransform.position = new Vector2(Mathf.Lerp(m_TimeTextRectTransform.position.x, m_TargetTextPosition.x, m_TextSpeed * Time.deltaTime),
-												Mathf.Lerp(m_TimeTextRectTransform.position.y, m_TargetTextPosition.y, m_TextSpeed * Time.deltaTime));
+			m_TimeTextRectTransform.anchoredPosition = Vector2.Lerp(m_TimeTextRectTransform.anchoredPosition, m_TimeTextRectGoalTransform.anchoredPosition, m_TextSpeed * Time.deltaTime);
+			/*new Vector2(Mathf.Lerp(m_TimeTextRectTransform.anchoredPosition.x, m_TimeTextRectGoalTransform.anchoredPosition.x, m_TextSpeed * Time.deltaTime),
+												Mathf.Lerp(m_TimeTextRectTransform.anchoredPosition.y, m_TimeTextRectGoalTransform.anchoredPosition.y, m_TextSpeed * Time.deltaTime));*/
 
-			if (Vector3.SqrMagnitude(m_TimeTextRectTransform.position - new Vector3(m_TargetTextPosition.x, m_TargetTextPosition.y)) < .1){
+			if (Vector2.SqrMagnitude(m_TimeTextRectTransform.anchoredPosition - m_TimeTextRectGoalTransform.anchoredPosition) < .1){
 				break;
 			}
 
