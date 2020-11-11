@@ -52,4 +52,8 @@ public class Collectable : MonoBehaviour {
 	protected virtual bool GetCollected(Collider2D collision) {
 		return true;
 	}
+
+	public void MarkDestroy() {
+		m_destroy = true;
+	}
 }
