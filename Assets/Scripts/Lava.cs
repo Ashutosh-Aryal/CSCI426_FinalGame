@@ -12,15 +12,50 @@ public class Lava : MonoBehaviour {
 	private bool m_moveForward = true;
 
 	[HideInInspector] public float m_HorizontalMovementSpeed = 0f;
+	[SerializeField] Material m_FlameMaterial;
+	Color m_OriginalFlameTintColor;
+	Color m_OriginalFlameEdgeColor;
+	[SerializeField] Color m_SlowdownFlameTintColor;
+	[SerializeField] Color m_SlowdownFlameEdgeColor;
+	[SerializeField] float m_SlowdownEffectDuration = 1f;
+	float m_CurrDuration = 0f;
+	bool m_ShowEffect = false;
 
 	private bool m_HasCameraStopped = false;
 
 	private void Start() {
 		m_oscillationSpeed = MinOscillationSpeed;
+		m_CurrDuration = 0f;
+		m_ShowEffect = false;
+		m_OriginalFlameTintColor = m_FlameMaterial.GetColor("_Tint");
+		m_OriginalFlameEdgeColor = m_FlameMaterial.GetColor("_EdgeColor");
 	}
 
 	// Update is called once per frame
 	void Update() {
+		if(m_ShowEffect)
+        {
+			m_CurrDuration += Time.deltaTime;
+			if(m_CurrDuration > m_SlowdownEffectDuration)
+            {
+				m_CurrDuration = m_SlowdownEffectDuration;
+				m_ShowEffect = false;
+            }
+        }
+		else
+        {
+			m_CurrDuration -= Time.deltaTime;
+			if(m_CurrDuration < 0f)
+            {
+				m_CurrDuration = 0f;
+            }
+        }
+
+		Color color = Color.Lerp(m_OriginalFlameTintColor, m_SlowdownFlameEdgeColor, m_CurrDuration / m_SlowdownEffectDuration);
+		m_FlameMaterial.SetColor("_Tint", color);
+		color = Color.Lerp(m_OriginalFlameEdgeColor, m_SlowdownFlameTintColor, m_CurrDuration / m_SlowdownEffectDuration);
+		m_FlameMaterial.SetColor("_EdgeColor", color);
+
 		if (m_HasCameraStopped)
 			return;
 
@@ -42,6 +77,7 @@ public class Lava : MonoBehaviour {
 
 		if (isLavaHorizontalPositionPastCamera)
 			m_HasCameraStopped = true;
+
 		
 	}
 
@@ -54,5 +90,11 @@ public class Lava : MonoBehaviour {
         } else if (collision.gameObject.tag == "Player") {
 			collision.gameObject.GetComponent<PlayerController>().Burn();
 		}
+    }
+
+	public void EnableSlowdownEffect()
+    {
+		m_ShowEffect = true;
+		m_CurrDuration = 0f;
     }
 }

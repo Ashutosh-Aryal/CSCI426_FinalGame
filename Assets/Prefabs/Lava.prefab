@@ -129,6 +129,10 @@ MonoBehaviour:
   MaxOscillationSpeed: 1
   m_screenAnchor: {fileID: 0}
   m_HorizontalMovementSpeed: 0
+  m_FlameMaterial: {fileID: 2100000, guid: d04ae2635f488b648963650bb0549c4c, type: 2}
+  m_SlowdownFlameTintColor: {r: 0.031372547, g: 1, b: 0.33733502, a: 0}
+  m_SlowdownFlameEdgeColor: {r: 0, g: 1, b: 0.94070315, a: 0}
+  m_SlowdownEffectDuration: 0.8
 --- !u!1 &1462102252087850115
 GameObject:
   m_ObjectHideFlags: 0
