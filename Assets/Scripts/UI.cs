@@ -21,7 +21,7 @@ public class UI : MonoBehaviour
 			return;
         timeAlive += Time.deltaTime;
         string timeAliveString = timeAlive.ToString();
-        timeText.text = "Time alive: " + timeAlive.ToString("0.00");
+        timeText.text = "Time Alive: " + timeAlive.ToString("0.00") + " seconds";
     }
 
 	public void StopTimer() {
