@@ -16,6 +16,7 @@ public class CameraController : MonoBehaviour {
     [SerializeField] private float m_HorizontalAcceleration = 0.1f;
 
 	[SerializeField] private RoomGenerator m_RoomGen;
+	[SerializeField] private Lava m_Lava;
 
 	private const float MAX_HORIZONTAL_SPEED = 4.8f;
 
@@ -80,5 +81,8 @@ public class CameraController : MonoBehaviour {
 		m_HorizontalMovementSpeed *= 1 - SlowPercentage;
 		if (m_RoomGen)
 			m_RoomGen.MarkSlowdown();
+		// show lava effect
+		if (m_Lava)
+			m_Lava.EnableSlowdownEffect();
 	}
 }
