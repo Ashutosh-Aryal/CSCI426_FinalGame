@@ -48,18 +48,37 @@ public class RoomGenerator : MonoBehaviour {
 	private void Update() {
 		// increase difficulty timer if we passed all intro rooms
 		if (m_introCounter >= m_StartingRooms.Count && m_difficultyTimer < SecsToMaxDifficulty)
-			m_difficultyTimer += Time.deltaTime;
+			m_difficultyTimer = Mathf.Min(m_difficultyTimer + Time.deltaTime, SecsToMaxDifficulty);
 
 		// increase slowdowntimer if we passed all intro rooms
 		if (m_introCounter >= m_StartingRooms.Count && m_slowdownTimer < SecsToMaxSlowDownProb)
-			m_slowdownTimer += Time.deltaTime;
+			m_slowdownTimer = Mathf.Min(m_difficultyTimer + Time.deltaTime, SecsToMaxSlowDownProb);
+
+		// if there are less than 3 rooms then make sure that we spawn more
+		while (m_RoomQueue.Count < 3)
+			CreateRoom();
+
+		// Get room closest to being destroyed
+		Room room = m_RoomQueue.Peek();
+
+		// Calculate distance from camera to see if it is time to destroy it; destroy if we are a room to the left of the camera
+		if (room.transform.position.x < mainCam.transform.position.x) {
+			float displacementSqr = (room.transform.position - mainCam.transform.position).sqrMagnitude;
+			// basically adjusting for rooms with variable widths
+			float deleteThresholdSqr = ((ROOM_CELL_WIDTH * room.NumUnits) / 2) + ROOM_CELL_WIDTH / 2;
+			deleteThresholdSqr *= deleteThresholdSqr; // sqr the value
+			if (displacementSqr > deleteThresholdSqr) {
+				Room roomToDestroy = m_RoomQueue.Dequeue();
+				Destroy(roomToDestroy.gameObject);
+				CreateRoom();
+				// increase the intro counter to count how many intro rooms we passed
+				if (m_introCounter < m_StartingRooms.Count)
+					m_introCounter++;
+			}
+		}
 	}
 
-	private void FixedUpdate() {
-		/*// increase difficulty timer if we passed all intro rooms
-		if (m_introCounter >= m_StartingRooms.Count && m_difficultyTimer < SecsToMaxDifficulty)
-			m_difficultyTimer += Time.deltaTime;*/
-
+	/*private void FixedUpdate() {
 		// if there are less than 3 rooms then make sure that we spawn more
 		while (m_RoomQueue.Count < 3)
 			CreateRoom();
@@ -82,7 +101,7 @@ public class RoomGenerator : MonoBehaviour {
 					m_introCounter++;
 			}
 		}
-    }
+    }*/
 
     void CreateRoom() {
 		// see what room pool we are choosing from
@@ -123,6 +142,10 @@ public class RoomGenerator : MonoBehaviour {
 			foreach (var item in room.LavaCollectables)
 				if (item)
 					item.gameObject.SetActive(false);
+		}
+		// lower probability of next spawn if the we spawn
+		else {
+			m_slowdownTimer = Mathf.Max(0, m_slowdownTimer - (SecsToMaxSlowDownProb * 0.7f));
 		}
 
 

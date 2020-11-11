@@ -4,6 +4,9 @@ using UnityEngine.SceneManagement;
 
 public class CameraController : MonoBehaviour {
 
+	[SerializeField] private AudioSource MusicSource;
+	[SerializeField] private float FadeSoundRate = 0.2f;
+
 	[SerializeField] private GameObject[] m_ButtonObjects;
     [SerializeField] private GameObject m_CanvasObject;
 
@@ -61,7 +64,7 @@ public class CameraController : MonoBehaviour {
 
         Camera myCamera = Camera.main;
         Vector3 myScreenPosition = myCamera.WorldToScreenPoint(m_PlayerObject.transform.position);
-        float horizontalMidpoint = myCamera.pixelWidth / 3.25f;
+        float horizontalMidpoint = myCamera.pixelWidth / 3.5f;
 
         if (myScreenPosition.x >= horizontalMidpoint) {
             transform.localPosition = m_NormalPosition; return;
@@ -79,7 +82,7 @@ public class CameraController : MonoBehaviour {
 
     // shows death screen
     public void ShowFinalScore() {
-
+		//StartCoroutine("CoFadeOutMusic");
 		m_IsPlayerDead = true;
 		m_CanvasObject.GetComponent<UI>().StopTimer();
 		StartCoroutine("CoShowFinalScore");
@@ -103,6 +106,8 @@ public class CameraController : MonoBehaviour {
 			yield return null;
 		}
 
+		StartCoroutine("CoFadeOutMusic");
+
 		foreach (var butt in m_ButtonObjects)
 			butt.SetActive(true);
 
@@ -112,6 +117,10 @@ public class CameraController : MonoBehaviour {
 	}
 
 	IEnumerator CoFadeOutMusic() {
+		while (MusicSource && MusicSource.volume > 0f) {
+			MusicSource.volume = Mathf.Lerp(MusicSource.volume, 0f, FadeSoundRate * Time.deltaTime);
+			yield return null;
+		}
 		yield break;
 	}
 
