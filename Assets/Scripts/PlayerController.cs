@@ -163,11 +163,11 @@ public class PlayerController : MonoBehaviour {
 				float dissolveAmount = 0f;
 				if (m_WasLookingLeft)
 				{
-					dissolveAmount = Mathf.Lerp(-2.5f, 3.5f, m_CurrDeathTime / m_TimeTillDeath);
+					dissolveAmount = Mathf.Lerp(0f, 2.0f, m_CurrDeathTime / m_TimeTillDeath);
 				}
 				else
 				{
-					dissolveAmount = Mathf.Lerp(3.5f, -2.5f, m_CurrDeathTime / m_TimeTillDeath);
+					dissolveAmount = Mathf.Lerp(2.0f, 0f, m_CurrDeathTime / m_TimeTillDeath);
 				}
 				//Debug.Log("dissolve amount: " + dissolveAmount);
 				m_BurningMaterial.SetFloat("_DissolveAmount", dissolveAmount);
@@ -182,7 +182,7 @@ public class PlayerController : MonoBehaviour {
             {
 				transform.position = m_LastPositionAlive;
 				m_CurrDeathTime += Time.deltaTime;
-				float dissolveAmount = Mathf.Lerp(-2.5f, 3.5f, m_CurrDeathTime / m_TimeTillDeath);
+				float dissolveAmount = Mathf.Lerp(0f, 0.8f, m_CurrDeathTime / m_TimeTillDeath);
 				m_DissolveMaterial.SetFloat("_DissolveAmount", dissolveAmount);
 				if (m_CurrDeathTime >= m_TimeTillDeath)
 				{
@@ -585,6 +585,7 @@ public class PlayerController : MonoBehaviour {
 		m_Rigidbody2D.simulated = false;
 		m_SpriteRenderer.material = m_DissolveMaterial;
 		m_DissolveMaterial.SetColor("_MainColor", currentCubeColor);
+		m_DissolveMaterial.SetFloat("_DissolveAmount", 0f);
 		//m_SpriteRenderer.enabled = false;
 		m_SwordObject.GetComponent<SpriteRenderer>().enabled = false;
 		m_LastPositionAlive = transform.position;
@@ -632,12 +633,12 @@ public class PlayerController : MonoBehaviour {
 		bool isCurrentlyLookingLeft = Mathf.Sign(transform.localScale.x) < 0;
 		if(isCurrentlyLookingLeft)
         {
-			m_BurningMaterial.SetFloat("_DissolveAmount", -2.5f);
+			m_BurningMaterial.SetFloat("_DissolveAmount", 0f);
 			m_WasLookingLeft = true;
 		}
 		else
         {
-			m_BurningMaterial.SetFloat("_DissolveAmount", 3.5f);
+			m_BurningMaterial.SetFloat("_DissolveAmount", 2.0f);
 			m_WasLookingLeft = false;
 		}
 
