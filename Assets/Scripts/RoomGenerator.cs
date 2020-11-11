@@ -137,7 +137,7 @@ public class RoomGenerator : MonoBehaviour {
 			// clear all other slowdowns
 			if (room)
 				foreach (var item in room.LavaCollectables)
-				if (item)
-					item.gameObject.SetActive(false);
+					if (item)
+						item.MarkDestroy();
 	}
 }

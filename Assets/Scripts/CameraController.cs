@@ -29,6 +29,8 @@ public class CameraController : MonoBehaviour {
 
     private void Start() {
 		m_NormalPosition = transform.localPosition;
+		// remove mouse cursor
+		Cursor.visible = false;
     }
 
     // Update is called once per frame
@@ -103,6 +105,8 @@ public class CameraController : MonoBehaviour {
 
 		foreach (var butt in m_ButtonObjects)
 			butt.SetActive(true);
+
+		Cursor.visible = true;
 
 		yield break;
 	}
