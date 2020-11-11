@@ -35891,7 +35891,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!58 &2650293316728056294
 CircleCollider2D:
@@ -36383,9 +36383,9 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 96249d66367bf9545a7670e6cb9c15e5, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 7f6e5c1fc1ae4be4c91b1eb89b33eec9, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.623
+  m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0

@@ -144,7 +144,7 @@ public class PlayerController : MonoBehaviour {
 			return;
 		}
 		// checks for wall collisions
-		//UpdateAllowedMovementDirection();
+		UpdateAllowedMovementDirection();
 
 		// check if walking off platform (no jumping in air)
 		if (!m_InAir && m_Rigidbody2D.velocity.y < 0)
@@ -326,7 +326,7 @@ public class PlayerController : MonoBehaviour {
 		if (m_AttackHeld)
 			return;
 
-		UpdateAllowedMovementDirection();
+		//UpdateAllowedMovementDirection();
 
 		// get input based on if we can move left/right
 		short movementDirectionScalar = 0;
@@ -422,10 +422,15 @@ public class PlayerController : MonoBehaviour {
 		//if (m_InAir && m_Rigidbody2D.velocity.y <= 0 && m_BoxCollider2D.Cast(Vector2.down, hits, .1f) >= 1) {
 		if (m_InAir && m_Rigidbody2D.velocity.y <= 0 && m_CircleCollider2D.Cast(Vector2.down, hits, .1f) >= 1) {
 			foreach (var hit in hits) {
-				if (hit.transform.position.y > transform.position.y)
+				if (hit.collider.gameObject.transform.position.y + hit.collider.bounds.extents.y > transform.position.y - m_CircleCollider2D.bounds.extents.y)
+				//if (hit.transform.position.y > transform.position.y)
 					continue;
 				if (hit.transform.tag == "Ground" || hit.transform.tag == "Obstacle") {
 					m_InAir = false;
+					m_Rigidbody2D.velocity = new Vector2(m_Rigidbody2D.velocity.x, 0);
+					//float newDist = hit.point.y - (transform.position.y - m_CircleCollider2D.bounds.extents.y);
+					//if (newDist > 0f)
+						//transform.Translate(Vector2.up * newDist);
 					break;
 				}
 			}
@@ -494,7 +499,7 @@ public class PlayerController : MonoBehaviour {
 			if (collision.gameObject.tag == "Ground")
 				return;
 
-			//bool isCollidingWithRightWall = m_ShouldMoveRight && m_CanMoveRight && contact.normal == Vector2.left;
+			/*//bool isCollidingWithRightWall = m_ShouldMoveRight && m_CanMoveRight && contact.normal == Vector2.left;
 			bool isCollidingWithRightWall = m_ShouldMoveRight && m_CanMoveRight && Vector2.Angle(contact.normal, Vector2.left) <= 60f;
 
 			//bool isCollidingWithLeftWall = m_ShouldMoveLeft && m_CanMoveLeft && contact.normal == Vector2.right;
@@ -509,11 +514,37 @@ public class PlayerController : MonoBehaviour {
 				} else {
 					m_CanMoveRight = false;
 				}
-			}
+			}*/
 
 			// break out early if we got all we need
-			if (!m_InAir && (isCollidingWithLeftWall || isCollidingWithRightWall))
+			//if (!m_InAir && (isCollidingWithLeftWall || isCollidingWithRightWall))
+			if (!m_InAir)
 				break;
+		}
+	}
+
+	private void OnCollisionStay2D(Collision2D collision) {
+
+		// only do side checks if we are in the the air
+		if (!m_InAir)
+			return;
+		 foreach (var contact in collision.contacts) {
+			bool isCollidingWithRightWall = m_ShouldMoveRight && m_CanMoveRight && Vector2.Angle(contact.normal, Vector2.left) <= 60f;
+
+			bool isCollidingWithLeftWall = m_ShouldMoveLeft && m_CanMoveLeft && Vector2.Angle(contact.normal, Vector2.right) <= 60f;
+
+			if (isCollidingWithLeftWall || isCollidingWithRightWall) {
+
+				m_Rigidbody2D.velocity = new Vector2(0, m_Rigidbody2D.velocity.y);
+
+				if (isCollidingWithLeftWall) {
+					m_CanMoveLeft = false;
+				}
+				else {
+					m_CanMoveRight = false;
+				}
+				break;
+			}
 		}
 	}
 

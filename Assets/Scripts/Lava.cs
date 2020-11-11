@@ -13,6 +13,7 @@ public class Lava : MonoBehaviour {
 
 	[HideInInspector] public float m_HorizontalMovementSpeed = 0f;
 	[SerializeField] Material m_FlameMaterial;
+	[SerializeField] Material m_FlameMaterialSTATIC;
 	Color m_OriginalFlameTintColor;
 	Color m_OriginalFlameEdgeColor;
 	[SerializeField] Color m_SlowdownFlameTintColor;
@@ -27,6 +28,9 @@ public class Lava : MonoBehaviour {
 		m_oscillationSpeed = MinOscillationSpeed;
 		m_CurrDuration = 0f;
 		m_ShowEffect = false;
+		// NEEDED for edge case of restarting game when slowdown effect going on
+		m_FlameMaterial.SetColor("_Tint", m_FlameMaterialSTATIC.GetColor("_Tint"));
+		m_FlameMaterial.SetColor("_EdgeColor", m_FlameMaterialSTATIC.GetColor("_EdgeColor"));
 		m_OriginalFlameTintColor = m_FlameMaterial.GetColor("_Tint");
 		m_OriginalFlameEdgeColor = m_FlameMaterial.GetColor("_EdgeColor");
 	}

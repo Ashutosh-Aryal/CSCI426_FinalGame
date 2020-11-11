@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mat_Fire
+  m_Name: Mat_Fire 1_STATIC
   m_Shader: {fileID: 4800000, guid: 85a3784cb1bd1f040b54ca325e64238f, type: 3}
   m_ShaderKeywords: ETC1_EXTERNAL_ALPHA MULTIPLY
   m_LightmapFlags: 4
